@@ -1,0 +1,1 @@
+{"namespace": "addressbook.avro","type": "record","name": "Person","fields": [{"name": "id", "type": "int"}, {"name": "name", "type": "string"},{"name": "email",  "type": ["string", "null"]},{"name": "PhoneNumber", "type": ["string", "null"]}]}
