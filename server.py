@@ -82,7 +82,7 @@ def handle_avro_client(connection, address):
 
     message_length, = struct.unpack('>I', data)
 
-    message = connection.recv(data)
+    message = connection.recv(message_length)
 
     message_buf = io.BytesIO(message)
     reader = avro.datafile.DataFileReader(message_buf, avro.io.DatumReader())
@@ -95,8 +95,11 @@ def handle_avro_client_print_to_file(connection, address):
 
     schema = avro.schema.Parse(open("schema/addressbook.avsc", "rb").read())
 
-    data = connection.recv(1024*1024)
-    message_buf = io.BytesIO(data)
+    data = connection.recv(4)
+
+    message_length, = struct.unpack('>I', data)
+
+    message_buf = io.BytesIO(message_length)
     reader = avro.datafile.DataFileReader(message_buf, avro.io.DatumReader())
 
     # Create a data file using DataFileWriter
@@ -143,8 +146,8 @@ def main():
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    #sock.bind(('172.16.150.67', 12345))
-    sock.bind(('127.0.0.1', 12345))
+    sock.bind(('172.16.150.67', 12345))
+    #sock.bind(('127.0.0.1', 12345))
     sock.listen(10)
 
     print("Listening")
@@ -166,82 +169,82 @@ def main():
     time_stamp = []
  
             
-        while True:
-            
-            conn, addr = sock.accept()
+    while True:
+        
+        conn, addr = sock.accept()
 
-            if int(printToFile) == 0:
-                if int(messageType) == 0:
-                    start = time.perf_counter()
-                    psutil.cpu_percent(None, False)
-                    psutil.cpu_times_percent(None,False)
-                    handle_proto_client(conn, addr)
-                elif int(messageType) == 1:
-                    start = time.perf_counter()
-                    psutil.cpu_percent(None, False)
-                    handle_capnp_client(conn, addr)
-                elif int(messageType) == 2:
-                    start = time.perf_counter()
-                    psutil.cpu_percent(None, False)
-                    handle_avro_client(conn, addr)
-                elif int(messageType) == 3:
-                    start = time.perf_counter()
-                    psutil.cpu_percent(None, False)
-                    handle_XML_client(conn, addr)
-            elif int(printToFile) == 1:
-                if int(messageType) == 0:
-                    start = time.perf_counter()
-                    psutil.cpu_percent(None, False)
-                    handle_proto_client_print_to_file(conn, addr)
-                elif int(messageType) == 1:
-                    start = time.perf_counter()
-                    psutil.cpu_percent(None, False)
-                    handle_capnp_client_print_to_file(conn, addr)
-                elif int(messageType) == 2:
-                    start = time.perf_counter()
-                    psutil.cpu_percent(None, False)
-                    handle_avro_client_print_to_file(conn, addr)
-                elif int(messageType) == 3:
-                    start = time.perf_counter()
-                    psutil.cpu_percent(None, False)
+        if int(printToFile) == 0:
+            if int(messageType) == 0:
+                start = time.perf_counter()
+                psutil.cpu_percent(None, False)
+                psutil.cpu_times_percent(None,False)
+                handle_proto_client(conn, addr)
+            elif int(messageType) == 1:
+                start = time.perf_counter()
+                psutil.cpu_percent(None, False)
+                handle_capnp_client(conn, addr)
+            elif int(messageType) == 2:
+                start = time.perf_counter()
+                psutil.cpu_percent(None, False)
+                handle_avro_client(conn, addr)
+            elif int(messageType) == 3:
+                start = time.perf_counter()
+                psutil.cpu_percent(None, False)
+                handle_XML_client(conn, addr)
+        elif int(printToFile) == 1:
+            if int(messageType) == 0:
+                start = time.perf_counter()
+                psutil.cpu_percent(None, False)
+                handle_proto_client_print_to_file(conn, addr)
+            elif int(messageType) == 1:
+                start = time.perf_counter()
+                psutil.cpu_percent(None, False)
+                handle_capnp_client_print_to_file(conn, addr)
+            elif int(messageType) == 2:
+                start = time.perf_counter()
+                psutil.cpu_percent(None, False)
+                handle_avro_client_print_to_file(conn, addr)
+            elif int(messageType) == 3:
+                start = time.perf_counter()
+                psutil.cpu_percent(None, False)
 
-                    handle_XML_client_print_to_file(conn, addr)
+                handle_XML_client_print_to_file(conn, addr)
 
-            times.append(time.perf_counter() - start)
-            memory.append(psutil.virtual_memory().percent)
-            time_stamp.append(time.perf_counter())
-            cpu_utilization.append(psutil.cpu_percent(None, False))
-            cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
-            cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
-            cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
+        times.append(time.perf_counter() - start)
+        memory.append(psutil.virtual_memory().percent)
+        time_stamp.append(time.perf_counter())
+        cpu_utilization.append(psutil.cpu_percent(None, False))
+        cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
+        cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
+        cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
 
-            disk_info1.append(psutil.disk_io_counters().read_count)
-            disk_info1.append(psutil.disk_io_counters().write_count)
-            disk_info1.append(psutil.disk_io_counters().read_bytes)
-            disk_info1.append(psutil.disk_io_counters().write_bytes)
-            disk_info1.append(psutil.disk_io_counters().read_time)
-            disk_info1.append(psutil.disk_io_counters().write_time)
-            net_io_counters1.append(psutil.net_io_counters().bytes_recv)
-            net_io_counters2.append(psutil.net_io_counters().packets_recv)
+        disk_info1.append(psutil.disk_io_counters().read_count)
+        disk_info1.append(psutil.disk_io_counters().write_count)
+        disk_info1.append(psutil.disk_io_counters().read_bytes)
+        disk_info1.append(psutil.disk_io_counters().write_bytes)
+        disk_info1.append(psutil.disk_io_counters().read_time)
+        disk_info1.append(psutil.disk_io_counters().write_time)
+        net_io_counters1.append(psutil.net_io_counters().bytes_recv)
+        net_io_counters2.append(psutil.net_io_counters().packets_recv)
 
-            with open('results/serverResult_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'.txt', 'w') as f:
-                f.write('CPU_UTIL:'+str(cpu_utilization)+'\n')
-                f.write('CPU_USER:'+str(cpu_util_user)+'\n')
-                f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
-                f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
-                f.write('time_stamp:'+str(time_stamp)+'\n')
-                f.write('MEMORY:'+ str(memory)+'\n')
-                f.write('TIMES:'+str(times)+'\n')
-                f.write('read_count:'+str(disk_info1)+'\n')
-                f.write('write_counter:'+str(disk_info2)+'\n')
-                f.write('read_bytes:'+str(disk_info3)+'\n')
-                f.write('write_bytes:'+str(disk_info4)+'\n')
-                f.write('read_time:'+str(disk_info5)+'\n')
-                f.write('write_time:'+str(disk_info6)+'\n')
-                f.write('bytes_recv:'+str(net_io_counters1)+'\n')
-                f.write('packets_recv:'+str(net_io_counters2)+'\n')
+        with open('results/serverResult_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'.txt', 'w') as f:
+            f.write('CPU_UTIL:'+str(cpu_utilization)+'\n')
+            f.write('CPU_USER:'+str(cpu_util_user)+'\n')
+            f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
+            f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
+            f.write('time_stamp:'+str(time_stamp)+'\n')
+            f.write('MEMORY:'+ str(memory)+'\n')
+            f.write('TIMES:'+str(times)+'\n')
+            f.write('read_count:'+str(disk_info1)+'\n')
+            f.write('write_counter:'+str(disk_info2)+'\n')
+            f.write('read_bytes:'+str(disk_info3)+'\n')
+            f.write('write_bytes:'+str(disk_info4)+'\n')
+            f.write('read_time:'+str(disk_info5)+'\n')
+            f.write('write_time:'+str(disk_info6)+'\n')
+            f.write('bytes_recv:'+str(net_io_counters1)+'\n')
+            f.write('packets_recv:'+str(net_io_counters2)+'\n')
 
-            #conn.close()
+        #conn.close()
 
 if __name__ == '__main__':
     main()

@@ -65,7 +65,7 @@ def send_capnp_message(connection, numberOfPeople, i):
 
 def send_avro_message(connection, numberOfPeople, i):
     
-    message = {'id': 1, 'name': 'Rosa Luxemburg', 'email': 'rosa.luxemburg@web.de', 'PhoneNumber': '01785250483'}
+    message = {'id': i, 'name': 'Rosa Luxemburg', 'email': 'rosa.luxemburg@web.de', 'PhoneNumber': '01785250483'}
     buf = io.BytesIO();
     schema = avro.schema.Parse(open("schema/addressbook.avsc", "r").read())
     writer = avro.datafile.DataFileWriter(buf, avro.io.DatumWriter(), schema)
@@ -75,7 +75,7 @@ def send_avro_message(connection, numberOfPeople, i):
     buf.seek(0)
     data = buf.read()
 
-    x = struct.pack('>I', len(message))
+    x = struct.pack('>I', len(data))
 
     connection.sendall(x)
     connection.sendall(data)
@@ -136,16 +136,18 @@ def main():
         net_io_counters2.append(psutil.net_io_counters().packets_recv)
 
         with open('results/serverResult_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'.txt', 'w') as f:
-        f.write('CPU:'+ str(cpu_util)+'\n')
-        f.write('MEMORY:'+ str(memory)+'\n')
-        f.write('bytes_sent:'+str(net_io_counters1)+'\n')
-        f.write('packets_sent:'+str(net_io_counters2)+'\n')
-        print('finished')
+            f.write('CPU:'+ str(cpu_util)+'\n')
+            f.write('MEMORY:'+ str(memory)+'\n')
+            f.write('bytes_sent:'+str(net_io_counters1)+'\n')
+            f.write('packets_sent:'+str(net_io_counters2)+'\n')
+            print('finished')
     elif int(messageType) == 1 :
         for i in range(0,int(numberOfExperiments)):
             psutil.cpu_times_percent(1, False)
             connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            connection.connect(('172.16.150.67', 12345))
+            #connection.connect(('172.16.150.67', 12345))
+            connection.connect(('127.0.0.1', 12345))
+
             for x in range(0,int(numberOfMessages)):
                 send_capnp_message(connection, numberOfPeople,i)
         memory.append(psutil.virtual_memory().percent)
@@ -154,16 +156,18 @@ def main():
         net_io_counters2.append(psutil.net_io_counters().packets_recv)
 
         with open('results/serverResult_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'.txt', 'w') as f:
-        f.write('CPU:'+ str(cpu_util)+'\n')
-        f.write('MEMORY:'+ str(memory)+'\n')
-        f.write('bytes_sent:'+str(net_io_counters1)+'\n')
-        f.write('packets_sent:'+str(net_io_counters2)+'\n')
-        print('finished')
+            f.write('CPU:'+ str(cpu_util)+'\n')
+            f.write('MEMORY:'+ str(memory)+'\n')
+            f.write('bytes_sent:'+str(net_io_counters1)+'\n')
+            f.write('packets_sent:'+str(net_io_counters2)+'\n')
+            print('finished')
     elif int(messageType) == 2 :
         for i in range(0,int(numberOfExperiments)):
             psutil.cpu_times_percent(1, False)
             connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            connection.connect(('172.16.150.67', 12345))
+            #connection.connect(('172.16.150.67', 12345))
+            connection.connect(('127.0.0.1', 12345))
+
             for x in range(0,int(numberOfMessages)):
                 send_avro_message(connection, numberOfPeople,i)
         memory.append(psutil.virtual_memory().percent)
@@ -172,11 +176,11 @@ def main():
         net_io_counters2.append(psutil.net_io_counters().packets_recv)
 
         with open('results/serverResult_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'.txt', 'w') as f:
-        f.write('CPU:'+ str(cpu_util)+'\n')
-        f.write('MEMORY:'+ str(memory)+'\n')
-        f.write('bytes_sent:'+str(net_io_counters1)+'\n')
-        f.write('packets_sent:'+str(net_io_counters2)+'\n')
-        print('finished')
+            f.write('CPU:'+ str(cpu_util)+'\n')
+            f.write('MEMORY:'+ str(memory)+'\n')
+            f.write('bytes_sent:'+str(net_io_counters1)+'\n')
+            f.write('packets_sent:'+str(net_io_counters2)+'\n')
+            print('finished')
     elif int(messageType) == 3 :
         for i in range(0,int(numberOfExperiments)):
             psutil.cpu_times_percent(1, False)
