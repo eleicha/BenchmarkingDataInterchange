@@ -55,7 +55,7 @@ def handle_capnp_client(connection, address):
     message = connection.recv(message_length)
 
     addresses = addressbook_capnp.AddressBook.new_message()
-    addresses = addressbook_capnp.AddressBook.from_bytes(message)
+    addresses = addressbook_capnp.AddressBook.from_bytes_packed(message)
 
     print (addresses)
 

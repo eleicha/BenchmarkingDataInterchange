@@ -45,7 +45,7 @@ def send_capnp_message(connection, numberOfPeople, i):
 
     for x in range(0, int(numberOfPeople)):
         people[x].name = "Rosa Luxemburg"
-        people[x].id = x
+        people[x].id = int(i)
         people[x].email = "rosa.luxemburg@web.de"
 
         rosaPhone = people[x].init("phones", 1)[0]
@@ -124,8 +124,8 @@ def main():
         for i in range(0,int(numberOfExperiments)):
             #psutil.cpu_times_percent(None, False)
             connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            #connection.connect(('172.16.150.67', 12345))
-            connection.connect(('127.0.0.1', 12345))
+            connection.connect(('172.16.150.67', 12345))
+            #connection.connect(('127.0.0.1', 12345))
             for x in range(0,int(numberOfMessages)):
                 send_proto_message(connection, numberOfPeople, i)
             #print(psutil.cpu_times_percent(0.0, False))
@@ -145,8 +145,8 @@ def main():
         for i in range(0,int(numberOfExperiments)):
             psutil.cpu_times_percent(1, False)
             connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            #connection.connect(('172.16.150.67', 12345))
-            connection.connect(('127.0.0.1', 12345))
+            connection.connect(('172.16.150.67', 12345))
+            #connection.connect(('127.0.0.1', 12345))
 
             for x in range(0,int(numberOfMessages)):
                 send_capnp_message(connection, numberOfPeople,i)
@@ -165,8 +165,8 @@ def main():
         for i in range(0,int(numberOfExperiments)):
             psutil.cpu_times_percent(1, False)
             connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            #connection.connect(('172.16.150.67', 12345))
-            connection.connect(('127.0.0.1', 12345))
+            connection.connect(('172.16.150.67', 12345))
+            #connection.connect(('127.0.0.1', 12345))
 
             for x in range(0,int(numberOfMessages)):
                 send_avro_message(connection, numberOfPeople,i)
@@ -185,8 +185,8 @@ def main():
         for i in range(0,int(numberOfExperiments)):
             psutil.cpu_times_percent(1, False)
             connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            #connection.connect(('172.16.150.67', 12345))
-            connection.connect(('127.0.0.1', 12345))
+            connection.connect(('172.16.150.67', 12345))
+            #connection.connect(('127.0.0.1', 12345))
             for x in range(0,int(numberOfMessages)):
                 send_XML_message(connection, numberOfPeople,i)
         memory.append(psutil.virtual_memory().percent)
