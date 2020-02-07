@@ -23,4 +23,4 @@ python3 client.py 1 0 20 10 10 wlan
 python3 client.py 1 0 21 10 10 wlan
 python3 client.py 1 0 22 10 10 wlan
 python3 client.py 1 0 23 10 10 wlan
-python3 client.py 1 0 24 10 10 wlan
+

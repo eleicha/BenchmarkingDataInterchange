@@ -17,6 +17,5 @@ python3 client.py 0 1 14 10 10 wlan
 python3 client.py 0 1 15 10 10 wlan
 python3 client.py 0 1 16 10 10 wlan
 python3 client.py 0 1 17 10 10 wlan
-python3 client.py 0 1 18 10 10 wlan
-python3 client.py 0 1 19 10 10 wlan
-python3 client.py 0 1 20 10 10 wlan
+
+
