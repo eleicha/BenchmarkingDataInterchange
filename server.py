@@ -98,8 +98,10 @@ def handle_avro_client_print_to_file(connection, address):
     data = connection.recv(4)
 
     message_length, = struct.unpack('>I', data)
+    
+    message = connection.recv(message_length)
 
-    message_buf = io.BytesIO(message_length)
+    message_buf = io.BytesIO(message)
     reader = avro.datafile.DataFileReader(message_buf, avro.io.DatumReader())
 
     # Create a data file using DataFileWriter
