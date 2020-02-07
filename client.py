@@ -88,7 +88,7 @@ def send_XML_message(connection, numberOfPeople, i):
     messages = '<xml version="1.0" encoding="UTF-8"> \n'
 
     for x in range(0, int(numberOfPeople)):
-        message = """<AddressBook><Person><id>"""+str(i)+"""<id/><personName>Rosa Luxemburg<personName/><email>rosa.luxemburg@web.de<email/><PhoneNumber><number>01785250483<number/><PhoneNumber/><Person/><AddressBook/>"""
+        message = """<AddressBook><Person><id>"""+str(x)+"""<id/><personName>Rosa Luxemburg<personName/><email>rosa.luxemburg@web.de<email/><PhoneNumber><number>01785250483<number/><PhoneNumber/><Person/><AddressBook/>"""
         messages += message + """ \n"""
 
     #xs = xmlschema.XMLSchema('schema/addressbook.xsd')
@@ -138,8 +138,7 @@ def main():
             #print(psutil.cpu_times())
             memory.append(psutil.virtual_memory().percent)
             cpu_util.append(psutil.cpu_percent(None, False))
-            net_io_counters1.append(psutil.net_io_counters().bytes_recv)
-            net_io_counters2.append(psutil.net_io_counters().packets_recv)
+            net_io_counters1.append(psutil.net_io_counters().bytes_sent)
             cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
             cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
             cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
@@ -166,8 +165,7 @@ def main():
                 send_capnp_message(connection, numberOfPeople,i)
             memory.append(psutil.virtual_memory().percent)
             cpu_util.append(psutil.cpu_percent(None, False))
-            net_io_counters1.append(psutil.net_io_counters().bytes_recv)
-            net_io_counters2.append(psutil.net_io_counters().packets_recv)
+            net_io_counters1.append(psutil.net_io_counters().bytes_sent)
             cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
             cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
             cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
@@ -194,8 +192,7 @@ def main():
                 send_avro_message(connection, numberOfPeople,i)
             memory.append(psutil.virtual_memory().percent)
             cpu_util.append(psutil.cpu_percent(None, False))
-            net_io_counters1.append(psutil.net_io_counters().bytes_recv)
-            net_io_counters2.append(psutil.net_io_counters().packets_recv)
+            net_io_counters1.append(psutil.net_io_counters().bytes_sent)
             cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
             cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
             cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
@@ -222,8 +219,7 @@ def main():
                 send_XML_message(connection, numberOfPeople,i)
             memory.append(psutil.virtual_memory().percent)
             cpu_util.append(psutil.cpu_percent(None, False))
-            net_io_counters1.append(psutil.net_io_counters().bytes_recv)
-            net_io_counters2.append(psutil.net_io_counters().packets_recv)
+            net_io_counters1.append(psutil.net_io_counters().bytes_sent)
             cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
             cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
             cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
@@ -235,7 +231,6 @@ def main():
             f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
             f.write('MEMORY:'+ str(memory)+'\n')
             f.write('bytes_sent:'+str(net_io_counters1)+'\n')
-            f.write('packets_sent:'+str(net_io_counters2)+'\n')
         print('finished')
 
 if __name__ == '__main__':

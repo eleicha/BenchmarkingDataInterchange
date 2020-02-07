@@ -13,6 +13,7 @@ import addressbook_capnp
 import addressBook_pb2
 import psutil
 import sys
+import os
 
 def handle_proto_client(connection, address):
 
@@ -28,6 +29,7 @@ def handle_proto_client(connection, address):
     addresses.ParseFromString(message)
 
     print (addresses)
+    return(message_length)
 
 def handle_proto_client_print_to_file(connection, address):
 
@@ -44,6 +46,8 @@ def handle_proto_client_print_to_file(connection, address):
     f = open("schema/addressbook_proto.bin", "w+b")
     f.write(message)
     f.close()
+    os.fsync(f)
+    return(message_length)
 
 def handle_capnp_client(connection, address):
 
@@ -58,6 +62,7 @@ def handle_capnp_client(connection, address):
     addresses = addressbook_capnp.AddressBook.from_bytes_packed(message)
 
     print (addresses)
+    return(message_length)
 
 def handle_capnp_client_print_to_file(connection, address):
     
@@ -74,6 +79,8 @@ def handle_capnp_client_print_to_file(connection, address):
     f = open("schema/addressbook_capnp.bin", "w+b")
     f.write(message)
     f.close()
+    os.fsync(f)
+    return(message_length)
 
 def handle_avro_client(connection, address):
 
@@ -90,6 +97,7 @@ def handle_avro_client(connection, address):
     for thing in reader:
         print(thing)
     reader.close()
+    return(message_length)
     
 def handle_avro_client_print_to_file(connection, address):
 
@@ -114,6 +122,8 @@ def handle_avro_client_print_to_file(connection, address):
         writer.append(thing)
     reader.close()
     writer.close()
+    os.fsync(writer)
+    return(message_length)
 
 def handle_XML_client(conn, addr):
     
@@ -123,6 +133,7 @@ def handle_XML_client(conn, addr):
     message_buf = conn.recv(message_length)
 
     print(message_buf.decode())
+    return(message_length)
 
 def handle_XML_client_print_to_file(conn, addr):
     
@@ -135,7 +146,8 @@ def handle_XML_client_print_to_file(conn, addr):
 
     f.write(message_buf)
     f.close()
-
+    os.fsync(f)
+    return(message_length)
 
 def main():
 
@@ -157,6 +169,7 @@ def main():
     print("Listening")
 
     times = []
+    message_length_total = []
     cpu_utilization = []
     cpu_util_user = []
     cpu_util_system = []
@@ -171,7 +184,7 @@ def main():
     net_io_counters1 = []
     net_io_counters2 = []
     time_stamp = []
- 
+ 	memory_length = []
             
     while True:
         
@@ -184,52 +197,53 @@ def main():
                 psutil.cpu_times_percent(None,False)
                 psutil.net_io_counters.cache_clear()
                 psutil.disk_io_counters.cache_clear()
-                handle_proto_client(conn, addr)
+                message_length.append(handle_proto_client(conn, addr))
             elif int(messageType) == 1:
                 start = time.perf_counter()
                 psutil.cpu_percent(None, False)
                 psutil.net_io_counters.cache_clear()
                 psutil.disk_io_counters.cache_clear()
-                handle_capnp_client(conn, addr)
+                message_length.append(handle_capnp_client(conn, addr))
             elif int(messageType) == 2:
                 start = time.perf_counter()
                 psutil.cpu_percent(None, False)
                 psutil.net_io_counters.cache_clear()
                 psutil.disk_io_counters.cache_clear()
-                handle_avro_client(conn, addr)
+                message_length.append(handle_avro_client(conn, addr))
             elif int(messageType) == 3:
                 start = time.perf_counter()
                 psutil.cpu_percent(None, False)
                 psutil.net_io_counters.cache_clear()
                 psutil.disk_io_counters.cache_clear()
-                handle_XML_client(conn, addr)
+                message_length.append(handle_XML_client(conn, addr))
         elif int(printToFile) == 1:
             if int(messageType) == 0:
                 start = time.perf_counter()
                 psutil.cpu_percent(None, False)
                 psutil.net_io_counters.cache_clear()
                 psutil.disk_io_counters.cache_clear()
-                handle_proto_client_print_to_file(conn, addr)
+                message_length.append(handle_proto_client_print_to_file(conn, addr))
             elif int(messageType) == 1:
                 start = time.perf_counter()
                 psutil.cpu_percent(None, False)
                 psutil.net_io_counters.cache_clear()
                 psutil.disk_io_counters.cache_clear()
-                handle_capnp_client_print_to_file(conn, addr)
+                message_length.append(handle_capnp_client_print_to_file(conn, addr))
             elif int(messageType) == 2:
                 start = time.perf_counter()
                 psutil.cpu_percent(None, False)
                 psutil.net_io_counters.cache_clear()
                 psutil.disk_io_counters.cache_clear()
-                handle_avro_client_print_to_file(conn, addr)
+                message_length.append(handle_avro_client_print_to_file(conn, addr))
             elif int(messageType) == 3:
                 start = time.perf_counter()
                 psutil.cpu_percent(None, False)
                 psutil.net_io_counters.cache_clear()
                 psutil.disk_io_counters.cache_clear()
-                handle_XML_client_print_to_file(conn, addr)
+                message_length.append(handle_XML_client_print_to_file(conn, addr))
 
         times.append(time.perf_counter() - start)
+        message_length_total.append(message_length)
         memory.append(psutil.virtual_memory().percent)
         time_stamp.append(time.perf_counter())
         cpu_utilization.append(psutil.cpu_percent(None, False))
@@ -244,13 +258,13 @@ def main():
         disk_info1.append(psutil.disk_io_counters().read_time)
         disk_info1.append(psutil.disk_io_counters().write_time)
         net_io_counters1.append(psutil.net_io_counters().bytes_recv)
-        net_io_counters2.append(psutil.net_io_counters().packets_recv)
 
         with open('results/server_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'_'+str(machinesUsed)+'.txt', 'w') as f:
             f.write('CPU_UTIL:'+str(cpu_utilization)+'\n')
             f.write('CPU_USER:'+str(cpu_util_user)+'\n')
             f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
             f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
+            f.write('message_length:')+str(message_length_total)+'\n')
             f.write('time_stamp:'+str(time_stamp)+'\n')
             f.write('MEMORY:'+ str(memory)+'\n')
             f.write('TIMES:'+str(times)+'\n')
@@ -261,7 +275,6 @@ def main():
             f.write('read_time:'+str(disk_info5)+'\n')
             f.write('write_time:'+str(disk_info6)+'\n')
             f.write('bytes_recv:'+str(net_io_counters1)+'\n')
-            f.write('packets_recv:'+str(net_io_counters2)+'\n')
 
         #conn.close()
 
