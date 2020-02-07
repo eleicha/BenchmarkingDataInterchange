@@ -88,7 +88,7 @@ def send_XML_message(connection, numberOfPeople, i):
     messages = '<xml version="1.0" encoding="UTF-8"> \n'
 
     for x in range(0, int(numberOfPeople)):
-        message = """<AddressBook><Person><id>"""+str(i)+"""<id/><personName>Rosa Luxemburg<personName/><email>rosa.luxemburg@web.de<email/><PhoneNumber><number>01785250483<number/><PhoneNumber/><Person/><AddressBook/>"""
+        message = """<AddressBook><Person><id>"""+str(x)+"""<id/><personName>Rosa Luxemburg<personName/><email>rosa.luxemburg@web.de<email/><PhoneNumber><number>01785250483<number/><PhoneNumber/><Person/><AddressBook/>"""
         messages += message + """ \n"""
 
     #xs = xmlschema.XMLSchema('schema/addressbook.xsd')
