@@ -143,6 +143,8 @@ def main():
     messageType = sys.argv[2]
     numberOfPeople = sys.argv[3]
     numberOfMessages = sys.argv[4]
+    numberOfExperiments = sys.argv[5]
+    machinesUsed = sys.argv[6]
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -178,36 +180,51 @@ def main():
                 start = time.perf_counter()
                 psutil.cpu_percent(None, False)
                 psutil.cpu_times_percent(None,False)
+                net_io_counters.cache_clear()
+                disk_io_counters.cache_clear()
                 handle_proto_client(conn, addr)
             elif int(messageType) == 1:
                 start = time.perf_counter()
                 psutil.cpu_percent(None, False)
+                net_io_counters.cache_clear()
+                disk_io_counters.cache_clear()
                 handle_capnp_client(conn, addr)
             elif int(messageType) == 2:
                 start = time.perf_counter()
                 psutil.cpu_percent(None, False)
+                net_io_counters.cache_clear()
+                disk_io_counters.cache_clear()
                 handle_avro_client(conn, addr)
             elif int(messageType) == 3:
                 start = time.perf_counter()
                 psutil.cpu_percent(None, False)
+                net_io_counters.cache_clear()
+                disk_io_counters.cache_clear()
                 handle_XML_client(conn, addr)
         elif int(printToFile) == 1:
             if int(messageType) == 0:
                 start = time.perf_counter()
                 psutil.cpu_percent(None, False)
+                net_io_counters.cache_clear()
+                disk_io_counters.cache_clear()
                 handle_proto_client_print_to_file(conn, addr)
             elif int(messageType) == 1:
                 start = time.perf_counter()
                 psutil.cpu_percent(None, False)
+                net_io_counters.cache_clear()
+                disk_io_counters.cache_clear()
                 handle_capnp_client_print_to_file(conn, addr)
             elif int(messageType) == 2:
                 start = time.perf_counter()
                 psutil.cpu_percent(None, False)
+                net_io_counters.cache_clear()
+                disk_io_counters.cache_clear()
                 handle_avro_client_print_to_file(conn, addr)
             elif int(messageType) == 3:
                 start = time.perf_counter()
                 psutil.cpu_percent(None, False)
-
+                net_io_counters.cache_clear()
+                disk_io_counters.cache_clear()
                 handle_XML_client_print_to_file(conn, addr)
 
         times.append(time.perf_counter() - start)
@@ -227,7 +244,7 @@ def main():
         net_io_counters1.append(psutil.net_io_counters().bytes_recv)
         net_io_counters2.append(psutil.net_io_counters().packets_recv)
 
-        with open('results/serverResult_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'.txt', 'w') as f:
+        with open('results/server_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'_'+str(machinesUsed)+'.txt', 'w') as f:
             f.write('CPU_UTIL:'+str(cpu_utilization)+'\n')
             f.write('CPU_USER:'+str(cpu_util_user)+'\n')
             f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')

@@ -111,10 +111,13 @@ def main():
     numberOfPeople = sys.argv[3]
     numberOfMessages = sys.argv[4]
     numberOfExperiments = sys.argv[5]
+    machinesUsed = sys.argv[6]
 
     p = psutil.Process(os.getpid())
-    psutil.cpu_percent(None, False)
     cpu_util = []
+    cpu_util_user = []
+    cpu_util_system = []
+    cpu_util_idle = []
     memory = []
     net_io_counters1 = []
     net_io_counters2 = []
@@ -126,17 +129,26 @@ def main():
             connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             connection.connect(('172.16.150.67', 12345))
             #connection.connect(('127.0.0.1', 12345))
+            psutil.cpu_times_percent(None,False)
+            psutil.cpu_percent(None, False)
+            net_io_counters.cache_clear()
             for x in range(0,int(numberOfMessages)):
                 send_proto_message(connection, numberOfPeople, i)
             #print(psutil.cpu_times_percent(0.0, False))
             #print(psutil.cpu_times())
-        memory.append(psutil.virtual_memory().percent)
-        cpu_util.append(psutil.cpu_percent(None, False))
-        net_io_counters1.append(psutil.net_io_counters().bytes_recv)
-        net_io_counters2.append(psutil.net_io_counters().packets_recv)
+            memory.append(psutil.virtual_memory().percent)
+            cpu_util.append(psutil.cpu_percent(None, False))
+            net_io_counters1.append(psutil.net_io_counters().bytes_recv)
+            net_io_counters2.append(psutil.net_io_counters().packets_recv)
+            cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
+            cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
+            cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
 
-        with open('results/serverResult_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'.txt', 'w') as f:
+        with open('results/client_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'_'+str(machinesUsed)+'.txt', 'w') as f:
             f.write('CPU:'+ str(cpu_util)+'\n')
+            f.write('CPU_USER:'+str(cpu_util_user)+'\n')
+            f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
+            f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
             f.write('MEMORY:'+ str(memory)+'\n')
             f.write('bytes_sent:'+str(net_io_counters1)+'\n')
             f.write('packets_sent:'+str(net_io_counters2)+'\n')
@@ -147,16 +159,24 @@ def main():
             connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             connection.connect(('172.16.150.67', 12345))
             #connection.connect(('127.0.0.1', 12345))
-
+            psutil.cpu_times_percent(None,False)
+            psutil.cpu_percent(None, False)
+            net_io_counters.cache_clear()
             for x in range(0,int(numberOfMessages)):
                 send_capnp_message(connection, numberOfPeople,i)
-        memory.append(psutil.virtual_memory().percent)
-        cpu_util.append(psutil.cpu_percent(None, False))
-        net_io_counters1.append(psutil.net_io_counters().bytes_recv)
-        net_io_counters2.append(psutil.net_io_counters().packets_recv)
+            memory.append(psutil.virtual_memory().percent)
+            cpu_util.append(psutil.cpu_percent(None, False))
+            net_io_counters1.append(psutil.net_io_counters().bytes_recv)
+            net_io_counters2.append(psutil.net_io_counters().packets_recv)
+            cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
+            cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
+            cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
 
-        with open('results/serverResult_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'.txt', 'w') as f:
+        with open('results/client_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'_'+str(machinesUsed)+'.txt', 'w') as f:
             f.write('CPU:'+ str(cpu_util)+'\n')
+            f.write('CPU_USER:'+str(cpu_util_user)+'\n')
+            f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
+            f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
             f.write('MEMORY:'+ str(memory)+'\n')
             f.write('bytes_sent:'+str(net_io_counters1)+'\n')
             f.write('packets_sent:'+str(net_io_counters2)+'\n')
@@ -167,16 +187,24 @@ def main():
             connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             connection.connect(('172.16.150.67', 12345))
             #connection.connect(('127.0.0.1', 12345))
-
+            psutil.cpu_times_percent(None,False)
+            psutil.cpu_percent(None, False)
+            net_io_counters.cache_clear()
             for x in range(0,int(numberOfMessages)):
                 send_avro_message(connection, numberOfPeople,i)
-        memory.append(psutil.virtual_memory().percent)
-        cpu_util.append(psutil.cpu_percent(None, False))
-        net_io_counters1.append(psutil.net_io_counters().bytes_recv)
-        net_io_counters2.append(psutil.net_io_counters().packets_recv)
+            memory.append(psutil.virtual_memory().percent)
+            cpu_util.append(psutil.cpu_percent(None, False))
+            net_io_counters1.append(psutil.net_io_counters().bytes_recv)
+            net_io_counters2.append(psutil.net_io_counters().packets_recv)
+            cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
+            cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
+            cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
 
-        with open('results/serverResult_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'.txt', 'w') as f:
+        with open('results/client_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'_'+str(machinesUsed)+'.txt', 'w') as f:
             f.write('CPU:'+ str(cpu_util)+'\n')
+            f.write('CPU_USER:'+str(cpu_util_user)+'\n')
+            f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
+            f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
             f.write('MEMORY:'+ str(memory)+'\n')
             f.write('bytes_sent:'+str(net_io_counters1)+'\n')
             f.write('packets_sent:'+str(net_io_counters2)+'\n')
@@ -187,15 +215,24 @@ def main():
             connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             connection.connect(('172.16.150.67', 12345))
             #connection.connect(('127.0.0.1', 12345))
+            psutil.cpu_times_percent(None,False)
+            psutil.cpu_percent(None, False)
+            net_io_counters.cache_clear()
             for x in range(0,int(numberOfMessages)):
                 send_XML_message(connection, numberOfPeople,i)
-        memory.append(psutil.virtual_memory().percent)
-        cpu_util.append(psutil.cpu_percent(None, False))
-        net_io_counters1.append(psutil.net_io_counters().bytes_recv)
-        net_io_counters2.append(psutil.net_io_counters().packets_recv)
+            memory.append(psutil.virtual_memory().percent)
+            cpu_util.append(psutil.cpu_percent(None, False))
+            net_io_counters1.append(psutil.net_io_counters().bytes_recv)
+            net_io_counters2.append(psutil.net_io_counters().packets_recv)
+            cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
+            cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
+            cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
 
-        with open('results/serverResult_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'.txt', 'w') as f:
+        with open('results/client_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'_'+str(machinesUsed)+'.txt', 'w') as f:
             f.write('CPU:'+ str(cpu_util)+'\n')
+            f.write('CPU_USER:'+str(cpu_util_user)+'\n')
+            f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
+            f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
             f.write('MEMORY:'+ str(memory)+'\n')
             f.write('bytes_sent:'+str(net_io_counters1)+'\n')
             f.write('packets_sent:'+str(net_io_counters2)+'\n')

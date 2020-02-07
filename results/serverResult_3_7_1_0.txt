@@ -1,4 +1,4 @@
-CPU:[7.5]
-MEMORY:[92.0]
-bytes_sent:[2637866341]
-packets_sent:[2460360]
+CPU:[5.9]
+MEMORY:[91.5]
+bytes_sent:[2642256371]
+packets_sent:[2477139]
