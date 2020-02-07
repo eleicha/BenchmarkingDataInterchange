@@ -1,7 +1,0 @@
-CPU:[0.0]
-CPU_USER:[0.0]
-CPU_SYSTEM:[0.0]
-CPU_IDLE:[1.0]
-MEMORY:[31.1]
-bytes_sent:[3807460]
-packets_sent:[12402]

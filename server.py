@@ -45,8 +45,9 @@ def handle_proto_client_print_to_file(connection, address):
 
     f = open("schema/addressbook_proto.bin", "w+b")
     f.write(message)
-    f.close()
+    
     os.fsync(f)
+    f.close()
     return(message_length)
 
 def handle_capnp_client(connection, address):
@@ -78,8 +79,8 @@ def handle_capnp_client_print_to_file(connection, address):
 
     f = open("schema/addressbook_capnp.bin", "w+b")
     f.write(message)
-    f.close()
     os.fsync(f)
+    f.close()
     return(message_length)
 
 def handle_avro_client(connection, address):
@@ -121,8 +122,8 @@ def handle_avro_client_print_to_file(connection, address):
     for thing in reader:
         writer.append(thing)
     reader.close()
+    
     writer.close()
-    os.fsync(writer)
     return(message_length)
 
 def handle_XML_client(conn, addr):
@@ -145,8 +146,9 @@ def handle_XML_client_print_to_file(conn, addr):
     f = open("schema/addressbook.xml", "wb")
 
     f.write(message_buf)
-    f.close()
+
     os.fsync(f)
+    f.close()
     return(message_length)
 
 def main():
@@ -184,7 +186,7 @@ def main():
     net_io_counters1 = []
     net_io_counters2 = []
     time_stamp = []
- 	memory_length = []
+    message_length = []
             
     while True:
         
@@ -264,7 +266,7 @@ def main():
             f.write('CPU_USER:'+str(cpu_util_user)+'\n')
             f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
             f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
-            f.write('message_length:')+str(message_length_total)+'\n')
+            f.write('message_length:'+str(message_length_total)+'\n')
             f.write('time_stamp:'+str(time_stamp)+'\n')
             f.write('MEMORY:'+ str(memory)+'\n')
             f.write('TIMES:'+str(times)+'\n')
