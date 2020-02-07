@@ -1,3 +1,5 @@
+#!/bin/bash
+
 python3 client.py 0 3 1 10 10 wlan
 python3 client.py 0 3 2 10 10 wlan
 python3 client.py 0 3 3 10 10 wlan

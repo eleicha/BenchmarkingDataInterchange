@@ -131,7 +131,7 @@ def main():
             #connection.connect(('127.0.0.1', 12345))
             psutil.cpu_times_percent(None,False)
             psutil.cpu_percent(None, False)
-            net_io_counters.cache_clear()
+            psutil.net_io_counters.cache_clear()
             for x in range(0,int(numberOfMessages)):
                 send_proto_message(connection, numberOfPeople, i)
             #print(psutil.cpu_times_percent(0.0, False))
@@ -155,13 +155,13 @@ def main():
             print('finished')
     elif int(messageType) == 1 :
         for i in range(0,int(numberOfExperiments)):
-            psutil.cpu_times_percent(1, False)
+            #psutil.cpu_times_percent(1, False)
             connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             connection.connect(('172.16.150.67', 12345))
             #connection.connect(('127.0.0.1', 12345))
             psutil.cpu_times_percent(None,False)
             psutil.cpu_percent(None, False)
-            net_io_counters.cache_clear()
+            psutil.net_io_counters.cache_clear()
             for x in range(0,int(numberOfMessages)):
                 send_capnp_message(connection, numberOfPeople,i)
             memory.append(psutil.virtual_memory().percent)
@@ -183,13 +183,13 @@ def main():
             print('finished')
     elif int(messageType) == 2 :
         for i in range(0,int(numberOfExperiments)):
-            psutil.cpu_times_percent(1, False)
+            #psutil.cpu_times_percent(1, False)
             connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             connection.connect(('172.16.150.67', 12345))
             #connection.connect(('127.0.0.1', 12345))
             psutil.cpu_times_percent(None,False)
             psutil.cpu_percent(None, False)
-            net_io_counters.cache_clear()
+            psutil.net_io_counters.cache_clear()
             for x in range(0,int(numberOfMessages)):
                 send_avro_message(connection, numberOfPeople,i)
             memory.append(psutil.virtual_memory().percent)
@@ -211,13 +211,13 @@ def main():
             print('finished')
     elif int(messageType) == 3 :
         for i in range(0,int(numberOfExperiments)):
-            psutil.cpu_times_percent(1, False)
+            #psutil.cpu_times_percent(1, False)
             connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             connection.connect(('172.16.150.67', 12345))
             #connection.connect(('127.0.0.1', 12345))
             psutil.cpu_times_percent(None,False)
             psutil.cpu_percent(None, False)
-            net_io_counters.cache_clear()
+            psutil.net_io_counters.cache_clear()
             for x in range(0,int(numberOfMessages)):
                 send_XML_message(connection, numberOfPeople,i)
             memory.append(psutil.virtual_memory().percent)
