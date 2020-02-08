@@ -121,6 +121,7 @@ def main():
     memory = []
     net_io_counters1 = []
     net_io_counters2 = []
+    start_value_bytes_sent = psutil.net_io_counters().bytes_sent
         
 
     if int(messageType) == 0 :
@@ -150,8 +151,8 @@ def main():
             f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
             f.write('MEMORY:'+ str(memory)+'\n')
             f.write('bytes_sent:'+str(net_io_counters1)+'\n')
-            f.write('packets_sent:'+str(net_io_counters2)+'\n')
-            print('finished')
+            f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
+        print('finished')
     elif int(messageType) == 1 :
         for i in range(0,int(numberOfExperiments)):
             #psutil.cpu_times_percent(1, False)
@@ -177,8 +178,8 @@ def main():
             f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
             f.write('MEMORY:'+ str(memory)+'\n')
             f.write('bytes_sent:'+str(net_io_counters1)+'\n')
-            f.write('packets_sent:'+str(net_io_counters2)+'\n')
-            print('finished')
+            f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
+        print('finished')
     elif int(messageType) == 2 :
         for i in range(0,int(numberOfExperiments)):
             #psutil.cpu_times_percent(1, False)
@@ -204,8 +205,8 @@ def main():
             f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
             f.write('MEMORY:'+ str(memory)+'\n')
             f.write('bytes_sent:'+str(net_io_counters1)+'\n')
-            f.write('packets_sent:'+str(net_io_counters2)+'\n')
-            print('finished')
+            f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
+        print('finished')
     elif int(messageType) == 3 :
         for i in range(0,int(numberOfExperiments)):
             #psutil.cpu_times_percent(1, False)
@@ -231,6 +232,7 @@ def main():
             f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
             f.write('MEMORY:'+ str(memory)+'\n')
             f.write('bytes_sent:'+str(net_io_counters1)+'\n')
+            f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
         print('finished')
 
 if __name__ == '__main__':

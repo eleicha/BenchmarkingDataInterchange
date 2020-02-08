@@ -29,7 +29,7 @@ def handle_proto_client(connection, address):
     addresses.ParseFromString(message)
 
     print (addresses)
-    return(message_length)
+    return(len(message))
 
 def handle_proto_client_print_to_file(connection, address):
 
@@ -48,7 +48,7 @@ def handle_proto_client_print_to_file(connection, address):
     
     os.fsync(f)
     f.close()
-    return(message_length)
+    return(len(message))
 
 def handle_capnp_client(connection, address):
 
@@ -63,7 +63,7 @@ def handle_capnp_client(connection, address):
     addresses = addressbook_capnp.AddressBook.from_bytes_packed(message)
 
     print (addresses)
-    return(message_length)
+    return(len(message))
 
 def handle_capnp_client_print_to_file(connection, address):
     
@@ -81,7 +81,7 @@ def handle_capnp_client_print_to_file(connection, address):
     f.write(message)
     os.fsync(f)
     f.close()
-    return(message_length)
+    return(len(message))
 
 def handle_avro_client(connection, address):
 
@@ -98,7 +98,7 @@ def handle_avro_client(connection, address):
     for thing in reader:
         print(thing)
     reader.close()
-    return(message_length)
+    return(len(message))
     
 def handle_avro_client_print_to_file(connection, address):
 
@@ -124,7 +124,7 @@ def handle_avro_client_print_to_file(connection, address):
     reader.close()
     
     writer.close()
-    return(message_length)
+    return(len(message))
 
 def handle_XML_client(conn, addr):
     
@@ -134,7 +134,7 @@ def handle_XML_client(conn, addr):
     message_buf = conn.recv(message_length)
 
     print(message_buf.decode())
-    return(message_length)
+    return(len(message_buf))
 
 def handle_XML_client_print_to_file(conn, addr):
     
@@ -149,7 +149,7 @@ def handle_XML_client_print_to_file(conn, addr):
 
     os.fsync(f)
     f.close()
-    return(message_length)
+    return(len(message_buf))
 
 def main():
 
@@ -164,8 +164,9 @@ def main():
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    sock.bind(('172.16.150.67', 12345))
+    #sock.bind(('172.16.150.67', 12345))
     #sock.bind(('127.0.0.1', 12345))
+    sock.bind(('192.168.43.156',12345))
     sock.listen(10)
 
     print("Listening")
@@ -187,6 +188,8 @@ def main():
     net_io_counters2 = []
     time_stamp = []
     message_length = []
+    start_value_disk = psutil.disk_io_counters().write_bytes
+    start_value_bytes_rec = psutil.net_io_counters().bytes_recv
             
     while True:
         
@@ -254,11 +257,11 @@ def main():
         cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
 
         disk_info1.append(psutil.disk_io_counters().read_count)
-        disk_info1.append(psutil.disk_io_counters().write_count)
-        disk_info1.append(psutil.disk_io_counters().read_bytes)
-        disk_info1.append(psutil.disk_io_counters().write_bytes)
-        disk_info1.append(psutil.disk_io_counters().read_time)
-        disk_info1.append(psutil.disk_io_counters().write_time)
+        disk_info2.append(psutil.disk_io_counters().write_count)
+        disk_info3.append(psutil.disk_io_counters().read_bytes)
+        disk_info4.append(psutil.disk_io_counters().write_bytes)
+        disk_info5.append(psutil.disk_io_counters().read_time)
+        disk_info6.append(psutil.disk_io_counters().write_time)
         net_io_counters1.append(psutil.net_io_counters().bytes_recv)
 
         with open('results/server_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'_'+str(machinesUsed)+'.txt', 'w') as f:
@@ -270,13 +273,14 @@ def main():
             f.write('time_stamp:'+str(time_stamp)+'\n')
             f.write('MEMORY:'+ str(memory)+'\n')
             f.write('TIMES:'+str(times)+'\n')
-            f.write('read_count:'+str(disk_info1)+'\n')
-            f.write('write_counter:'+str(disk_info2)+'\n')
             f.write('read_bytes:'+str(disk_info3)+'\n')
             f.write('write_bytes:'+str(disk_info4)+'\n')
             f.write('read_time:'+str(disk_info5)+'\n')
             f.write('write_time:'+str(disk_info6)+'\n')
             f.write('bytes_recv:'+str(net_io_counters1)+'\n')
+            f.write('start_value_disk:'+str(start_value_disk)+'\n')
+            f.write('start_value_bytes_rec:'+str(start_value_bytes_rec)+'\n')
+
 
         #conn.close()
 
