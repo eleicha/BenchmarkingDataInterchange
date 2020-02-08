@@ -166,11 +166,11 @@ def main():
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     #sock.bind(('172.16.150.67', 12345))
     #sock.bind(('127.0.0.1', 12345))
-<<<<<<< HEAD
+
     sock.bind(('192.168.43.156',12345))
-=======
-    sock.bind('172.17.0.1', 12345))
->>>>>>> ecc96c7d53ee574b77f7c74658b777f5218f2cdf
+
+    #sock.bind('172.17.0.1', 12345))
+
     sock.listen(10)
 
     print("Listening")
