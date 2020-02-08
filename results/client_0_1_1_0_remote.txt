@@ -1,0 +1,7 @@
+CPU:[27.8]
+CPU_USER:[4.0]
+CPU_SYSTEM:[0.0]
+CPU_IDLE:[0.0]
+MEMORY:[23.2]
+bytes_sent:[1881915]
+packets_sent:[4775]

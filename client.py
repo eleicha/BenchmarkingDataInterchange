@@ -127,8 +127,9 @@ def main():
         for i in range(0,int(numberOfExperiments)):
             #psutil.cpu_times_percent(None, False)
             connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            connection.connect(('172.16.150.67', 12345))
+            #connection.connect(('172.16.150.67', 12345))
             #connection.connect(('127.0.0.1', 12345))
+            connection.connect(('172.16.150.165', 12345))
             psutil.cpu_times_percent(None,False)
             psutil.cpu_percent(None, False)
             psutil.net_io_counters.cache_clear()
@@ -156,8 +157,9 @@ def main():
         for i in range(0,int(numberOfExperiments)):
             #psutil.cpu_times_percent(1, False)
             connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            connection.connect(('172.16.150.67', 12345))
+            #connection.connect(('172.16.150.67', 12345))
             #connection.connect(('127.0.0.1', 12345))
+            connection.connect(('172.16.150.165',12345))
             psutil.cpu_times_percent(None,False)
             psutil.cpu_percent(None, False)
             psutil.net_io_counters.cache_clear()
@@ -183,8 +185,9 @@ def main():
         for i in range(0,int(numberOfExperiments)):
             #psutil.cpu_times_percent(1, False)
             connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            connection.connect(('172.16.150.67', 12345))
+            #connection.connect(('172.16.150.67', 12345))
             #connection.connect(('127.0.0.1', 12345))
+            connection.connect(('172.16.150.165', 12345))
             psutil.cpu_times_percent(None,False)
             psutil.cpu_percent(None, False)
             psutil.net_io_counters.cache_clear()
@@ -210,8 +213,9 @@ def main():
         for i in range(0,int(numberOfExperiments)):
             #psutil.cpu_times_percent(1, False)
             connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            connection.connect(('172.16.150.67', 12345))
+            #connection.connect(('172.16.150.67', 12345))
             #connection.connect(('127.0.0.1', 12345))
+            connection.connect(('172.16.150.165',12345))
             psutil.cpu_times_percent(None,False)
             psutil.cpu_percent(None, False)
             psutil.net_io_counters.cache_clear()
