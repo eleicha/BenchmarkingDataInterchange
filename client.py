@@ -12,6 +12,7 @@ import addressbook_capnp
 import psutil
 import os
 import sys
+import time
 
 def send_proto_message(connection, numberOfPeople, i):
 
@@ -124,7 +125,7 @@ def main():
     start_value_bytes_sent = psutil.net_io_counters().bytes_sent
     times = []
             
-    for numberOfPeople in range(0, numberOfPeopleOrigin):
+    for numberOfPeople in range(0,int(numberOfPeopleOrigin)):
         
         if int(messageType) == 0 :
             for i in range(0,int(numberOfExperiments)):
@@ -132,7 +133,7 @@ def main():
                 connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 #connection.connect(('172.16.150.67', 12345))
                 #connection.connect(('127.0.0.1', 12345))
-                connection.connect(('192.168.43.156', 12345))
+                connection.connect(('192.168.2.105', 12345))
                 psutil.cpu_times_percent(None,False)
                 psutil.cpu_percent(None, False)
                 psutil.net_io_counters.cache_clear()
@@ -166,7 +167,7 @@ def main():
                 connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 #connection.connect(('172.16.150.67', 12345))
                 #connection.connect(('127.0.0.1', 12345))
-                connection.connect(('192.168.43.156',12345))
+                connection.connect(('192.168.2.105',12345))
                 psutil.cpu_times_percent(None,False)
                 psutil.cpu_percent(None, False)
                 psutil.net_io_counters.cache_clear()
@@ -198,14 +199,14 @@ def main():
                 connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 #connection.connect(('172.16.150.67', 12345))
                 #connection.connect(('127.0.0.1', 12345))
-                connection.connect(('192.168.43.156', 12345))
+                connection.connect(('192.168.2.105', 12345))
                 psutil.cpu_times_percent(None,False)
                 psutil.cpu_percent(None, False)
                 psutil.net_io_counters.cache_clear()
                 start = time.perf_counter()
                 for x in range(0,int(numberOfMessages)):
                     send_avro_message(connection, numberOfPeople,i)
-               times.append(time.perf_counter() - start)
+                times.append(time.perf_counter() - start)
                 memory.append(psutil.virtual_memory().percent)
                 cpu_util.append(psutil.cpu_percent(None, False))
                 net_io_counters1.append(psutil.net_io_counters().bytes_sent)
@@ -229,7 +230,7 @@ def main():
                 connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 #connection.connect(('172.16.150.67', 12345))
                 #connection.connect(('127.0.0.1', 12345))
-                connection.connect(('192.168.43.156',12345))
+                connection.connect(('192.168.2.105',12345))
                 psutil.cpu_times_percent(None,False)
                 psutil.cpu_percent(None, False)
                 psutil.net_io_counters.cache_clear()
