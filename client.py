@@ -37,6 +37,8 @@ def send_proto_message(connection, numberOfPeople, i):
     print("Type of Proto data send: " + str(type(message)))
     print("Iter: " + str(i))
 
+    return(len(message))
+
 
 def send_capnp_message(connection, numberOfPeople, i):
     
@@ -63,6 +65,8 @@ def send_capnp_message(connection, numberOfPeople, i):
     print("Type of Capnp data send: " + str(type(message)))
     print("Iter: " + str(i))
 
+    return(len(message))
+
 
 def send_avro_message(connection, numberOfPeople, i):
     
@@ -84,6 +88,8 @@ def send_avro_message(connection, numberOfPeople, i):
     print("Type of Avro data send: " + str(type(data)))
     print("Iter: " + str(i))
 
+    return(len(message))
+
 def send_XML_message(connection, numberOfPeople, i):
 
     messages = '<xml version="1.0" encoding="UTF-8"> \n'
@@ -103,6 +109,8 @@ def send_XML_message(connection, numberOfPeople, i):
     print("Length of XML data: " + str(len(messages.encode())))
     print("Type of XML data send: " + str(type(messages.encode())))
     print("Iter: " + str(i))
+
+    return(len(message))
 
 def main():
 
@@ -124,6 +132,7 @@ def main():
     net_io_counters2 = []
     start_value_bytes_sent = psutil.net_io_counters().bytes_sent
     times = []
+    message_length = []
             
     for numberOfPeople in range(0,int(numberOfPeopleOrigin)):
         
@@ -140,9 +149,10 @@ def main():
                 start = time.perf_counter()
 
                 for x in range(0,int(numberOfMessages)):
-                    send_proto_message(connection, numberOfPeople, i)
+                    mem = send_proto_message(connection, numberOfPeople, i)
                 #print(psutil.cpu_times_percent(0.0, False))
                 #print(psutil.cpu_times())
+                message_length.append(mem)
                 times.append(time.perf_counter() - start)
                 memory.append(psutil.virtual_memory().percent)
                 cpu_util.append(psutil.cpu_percent(None, False))
@@ -158,6 +168,7 @@ def main():
                 f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
                 f.write('MEMORY:'+ str(memory)+'\n')
                 f.write('TIME:'+str(times)+'\n')
+                f.write('message_length:'+str(message_length)+'\n')
                 f.write('bytes_sent:'+str(net_io_counters1)+'\n')
                 f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
             print('finished')
@@ -174,7 +185,8 @@ def main():
                 start = time.perf_counter()
 
                 for x in range(0,int(numberOfMessages)):
-                    send_capnp_message(connection, numberOfPeople,i)
+                    mem = send_capnp_message(connection, numberOfPeople,i)
+                message_length.append(mem)
                 times.append(time.perf_counter() - start)
                 memory.append(psutil.virtual_memory().percent)
                 cpu_util.append(psutil.cpu_percent(None, False))
@@ -190,6 +202,7 @@ def main():
                 f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
                 f.write('MEMORY:'+ str(memory)+'\n')
                 f.write('TIME:'+str(times)+'\n')
+                f.write('message_length:'+str(message_length)+'\n')
                 f.write('bytes_sent:'+str(net_io_counters1)+'\n')
                 f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
             print('finished')
@@ -205,7 +218,8 @@ def main():
                 psutil.net_io_counters.cache_clear()
                 start = time.perf_counter()
                 for x in range(0,int(numberOfMessages)):
-                    send_avro_message(connection, numberOfPeople,i)
+                    mem = send_avro_message(connection, numberOfPeople,i)
+                message_length.append(mem)
                 times.append(time.perf_counter() - start)
                 memory.append(psutil.virtual_memory().percent)
                 cpu_util.append(psutil.cpu_percent(None, False))
@@ -221,6 +235,7 @@ def main():
                 f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
                 f.write('MEMORY:'+ str(memory)+'\n')
                 f.write('TIME:'+str(times)+'\n')
+                f.write('message_length:'+str(message_length)+'\n')
                 f.write('bytes_sent:'+str(net_io_counters1)+'\n')
                 f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
             print('finished')
@@ -236,7 +251,8 @@ def main():
                 psutil.net_io_counters.cache_clear()
                 start = time.perf_counter()
                 for x in range(0,int(numberOfMessages)):
-                    send_XML_message(connection, numberOfPeople,i)
+                    mem=send_XML_message(connection, numberOfPeople,i)
+                message_length.append(mem)
                 times.append(time.perf_counter() - start)
                 memory.append(psutil.virtual_memory().percent)
                 cpu_util.append(psutil.cpu_percent(None, False))
@@ -252,6 +268,7 @@ def main():
                 f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
                 f.write('MEMORY:'+ str(memory)+'\n')
                 f.write('TIME:'+str(times)+'\n')
+                f.write('message_length:'+str(message_length)+'\n')
                 f.write('bytes_sent:'+str(net_io_counters1)+'\n')
                 f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
             print('finished')
