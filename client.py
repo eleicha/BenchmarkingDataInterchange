@@ -108,7 +108,7 @@ def main():
     #0 for protobuf, 1 for cap'n proto, 2 for Apache Avro, and 3 for XML
     printToFile = sys.argv[1]
     messageType = sys.argv[2]
-    numberOfPeople = sys.argv[3]
+    numberOfPeopleOrigin = sys.argv[3]
     numberOfMessages = sys.argv[4]
     numberOfExperiments = sys.argv[5]
     machinesUsed = sys.argv[6]
@@ -122,122 +122,138 @@ def main():
     net_io_counters1 = []
     net_io_counters2 = []
     start_value_bytes_sent = psutil.net_io_counters().bytes_sent
+    times = []
+            
+    for numberOfPeople in range(0, numberOfPeopleOrigin):
         
+        if int(messageType) == 0 :
+            for i in range(0,int(numberOfExperiments)):
+                #psutil.cpu_times_percent(None, False)
+                connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                #connection.connect(('172.16.150.67', 12345))
+                #connection.connect(('127.0.0.1', 12345))
+                connection.connect(('192.168.43.156', 12345))
+                psutil.cpu_times_percent(None,False)
+                psutil.cpu_percent(None, False)
+                psutil.net_io_counters.cache_clear()
+                start = time.perf_counter()
 
-    if int(messageType) == 0 :
-        for i in range(0,int(numberOfExperiments)):
-            #psutil.cpu_times_percent(None, False)
-            connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            #connection.connect(('172.16.150.67', 12345))
-            #connection.connect(('127.0.0.1', 12345))
-            connection.connect(('192.168.43.156', 12345))
-            psutil.cpu_times_percent(None,False)
-            psutil.cpu_percent(None, False)
-            psutil.net_io_counters.cache_clear()
-            for x in range(0,int(numberOfMessages)):
-                send_proto_message(connection, numberOfPeople, i)
-            #print(psutil.cpu_times_percent(0.0, False))
-            #print(psutil.cpu_times())
-            memory.append(psutil.virtual_memory().percent)
-            cpu_util.append(psutil.cpu_percent(None, False))
-            net_io_counters1.append(psutil.net_io_counters().bytes_sent)
-            cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
-            cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
-            cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
+                for x in range(0,int(numberOfMessages)):
+                    send_proto_message(connection, numberOfPeople, i)
+                #print(psutil.cpu_times_percent(0.0, False))
+                #print(psutil.cpu_times())
+                times.append(time.perf_counter() - start)
+                memory.append(psutil.virtual_memory().percent)
+                cpu_util.append(psutil.cpu_percent(None, False))
+                net_io_counters1.append(psutil.net_io_counters().bytes_sent)
+                cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
+                cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
+                cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
 
-        with open('results/client_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'_'+str(machinesUsed)+'.txt', 'w') as f:
-            f.write('CPU:'+ str(cpu_util)+'\n')
-            f.write('CPU_USER:'+str(cpu_util_user)+'\n')
-            f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
-            f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
-            f.write('MEMORY:'+ str(memory)+'\n')
-            f.write('bytes_sent:'+str(net_io_counters1)+'\n')
-            f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
-        print('finished')
-    elif int(messageType) == 1 :
-        for i in range(0,int(numberOfExperiments)):
-            #psutil.cpu_times_percent(1, False)
-            connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            #connection.connect(('172.16.150.67', 12345))
-            #connection.connect(('127.0.0.1', 12345))
-            connection.connect(('192.168.43.156',12345))
-            psutil.cpu_times_percent(None,False)
-            psutil.cpu_percent(None, False)
-            psutil.net_io_counters.cache_clear()
-            for x in range(0,int(numberOfMessages)):
-                send_capnp_message(connection, numberOfPeople,i)
-            memory.append(psutil.virtual_memory().percent)
-            cpu_util.append(psutil.cpu_percent(None, False))
-            net_io_counters1.append(psutil.net_io_counters().bytes_sent)
-            cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
-            cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
-            cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
+            with open('results/client_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'_'+str(machinesUsed)+'.txt', 'w') as f:
+                f.write('CPU:'+ str(cpu_util)+'\n')
+                f.write('CPU_USER:'+str(cpu_util_user)+'\n')
+                f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
+                f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
+                f.write('MEMORY:'+ str(memory)+'\n')
+                f.write('TIME:'+str(times)+'\n')
+                f.write('bytes_sent:'+str(net_io_counters1)+'\n')
+                f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
+            print('finished')
+        elif int(messageType) == 1 :
+            for i in range(0,int(numberOfExperiments)):
+                #psutil.cpu_times_percent(1, False)
+                connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                #connection.connect(('172.16.150.67', 12345))
+                #connection.connect(('127.0.0.1', 12345))
+                connection.connect(('192.168.43.156',12345))
+                psutil.cpu_times_percent(None,False)
+                psutil.cpu_percent(None, False)
+                psutil.net_io_counters.cache_clear()
+                start = time.perf_counter()
 
-        with open('results/client_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'_'+str(machinesUsed)+'.txt', 'w') as f:
-            f.write('CPU:'+ str(cpu_util)+'\n')
-            f.write('CPU_USER:'+str(cpu_util_user)+'\n')
-            f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
-            f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
-            f.write('MEMORY:'+ str(memory)+'\n')
-            f.write('bytes_sent:'+str(net_io_counters1)+'\n')
-            f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
-        print('finished')
-    elif int(messageType) == 2 :
-        for i in range(0,int(numberOfExperiments)):
-            #psutil.cpu_times_percent(1, False)
-            connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            #connection.connect(('172.16.150.67', 12345))
-            #connection.connect(('127.0.0.1', 12345))
-            connection.connect(('192.168.43.156', 12345))
-            psutil.cpu_times_percent(None,False)
-            psutil.cpu_percent(None, False)
-            psutil.net_io_counters.cache_clear()
-            for x in range(0,int(numberOfMessages)):
-                send_avro_message(connection, numberOfPeople,i)
-            memory.append(psutil.virtual_memory().percent)
-            cpu_util.append(psutil.cpu_percent(None, False))
-            net_io_counters1.append(psutil.net_io_counters().bytes_sent)
-            cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
-            cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
-            cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
+                for x in range(0,int(numberOfMessages)):
+                    send_capnp_message(connection, numberOfPeople,i)
+                times.append(time.perf_counter() - start)
+                memory.append(psutil.virtual_memory().percent)
+                cpu_util.append(psutil.cpu_percent(None, False))
+                net_io_counters1.append(psutil.net_io_counters().bytes_sent)
+                cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
+                cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
+                cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
 
-        with open('results/client_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'_'+str(machinesUsed)+'.txt', 'w') as f:
-            f.write('CPU:'+ str(cpu_util)+'\n')
-            f.write('CPU_USER:'+str(cpu_util_user)+'\n')
-            f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
-            f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
-            f.write('MEMORY:'+ str(memory)+'\n')
-            f.write('bytes_sent:'+str(net_io_counters1)+'\n')
-            f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
-        print('finished')
-    elif int(messageType) == 3 :
-        for i in range(0,int(numberOfExperiments)):
-            #psutil.cpu_times_percent(1, False)
-            connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            #connection.connect(('172.16.150.67', 12345))
-            #connection.connect(('127.0.0.1', 12345))
-            connection.connect(('192.168.43.156',12345))
-            psutil.cpu_times_percent(None,False)
-            psutil.cpu_percent(None, False)
-            psutil.net_io_counters.cache_clear()
-            for x in range(0,int(numberOfMessages)):
-                send_XML_message(connection, numberOfPeople,i)
-            memory.append(psutil.virtual_memory().percent)
-            cpu_util.append(psutil.cpu_percent(None, False))
-            net_io_counters1.append(psutil.net_io_counters().bytes_sent)
-            cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
-            cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
-            cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
+            with open('results/client_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'_'+str(machinesUsed)+'.txt', 'w') as f:
+                f.write('CPU:'+ str(cpu_util)+'\n')
+                f.write('CPU_USER:'+str(cpu_util_user)+'\n')
+                f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
+                f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
+                f.write('MEMORY:'+ str(memory)+'\n')
+                f.write('TIME:'+str(times)+'\n')
+                f.write('bytes_sent:'+str(net_io_counters1)+'\n')
+                f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
+            print('finished')
+        elif int(messageType) == 2 :
+            for i in range(0,int(numberOfExperiments)):
+                #psutil.cpu_times_percent(1, False)
+                connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                #connection.connect(('172.16.150.67', 12345))
+                #connection.connect(('127.0.0.1', 12345))
+                connection.connect(('192.168.43.156', 12345))
+                psutil.cpu_times_percent(None,False)
+                psutil.cpu_percent(None, False)
+                psutil.net_io_counters.cache_clear()
+                start = time.perf_counter()
+                for x in range(0,int(numberOfMessages)):
+                    send_avro_message(connection, numberOfPeople,i)
+               times.append(time.perf_counter() - start)
+                memory.append(psutil.virtual_memory().percent)
+                cpu_util.append(psutil.cpu_percent(None, False))
+                net_io_counters1.append(psutil.net_io_counters().bytes_sent)
+                cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
+                cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
+                cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
 
-        with open('results/client_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'_'+str(machinesUsed)+'.txt', 'w') as f:
-            f.write('CPU:'+ str(cpu_util)+'\n')
-            f.write('CPU_USER:'+str(cpu_util_user)+'\n')
-            f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
-            f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
-            f.write('MEMORY:'+ str(memory)+'\n')
-            f.write('bytes_sent:'+str(net_io_counters1)+'\n')
-            f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
-        print('finished')
+            with open('results/client_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'_'+str(machinesUsed)+'.txt', 'w') as f:
+                f.write('CPU:'+ str(cpu_util)+'\n')
+                f.write('CPU_USER:'+str(cpu_util_user)+'\n')
+                f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
+                f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
+                f.write('MEMORY:'+ str(memory)+'\n')
+                f.write('TIME:'+str(times)+'\n')
+                f.write('bytes_sent:'+str(net_io_counters1)+'\n')
+                f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
+            print('finished')
+        elif int(messageType) == 3 :
+            for i in range(0,int(numberOfExperiments)):
+                #psutil.cpu_times_percent(1, False)
+                connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                #connection.connect(('172.16.150.67', 12345))
+                #connection.connect(('127.0.0.1', 12345))
+                connection.connect(('192.168.43.156',12345))
+                psutil.cpu_times_percent(None,False)
+                psutil.cpu_percent(None, False)
+                psutil.net_io_counters.cache_clear()
+                start = time.perf_counter()
+                for x in range(0,int(numberOfMessages)):
+                    send_XML_message(connection, numberOfPeople,i)
+                times.append(time.perf_counter() - start)
+                memory.append(psutil.virtual_memory().percent)
+                cpu_util.append(psutil.cpu_percent(None, False))
+                net_io_counters1.append(psutil.net_io_counters().bytes_sent)
+                cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
+                cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
+                cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
+
+            with open('results/client_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'_'+str(machinesUsed)+'.txt', 'w') as f:
+                f.write('CPU:'+ str(cpu_util)+'\n')
+                f.write('CPU_USER:'+str(cpu_util_user)+'\n')
+                f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
+                f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
+                f.write('MEMORY:'+ str(memory)+'\n')
+                f.write('TIME:'+str(times)+'\n')
+                f.write('bytes_sent:'+str(net_io_counters1)+'\n')
+                f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
+            print('finished')
 
 if __name__ == '__main__':
     main()

@@ -255,19 +255,21 @@ def draw_boxplot_xml(values, start_value_bytes_rec, name, title):
 
 	#ax = fig.add_subplot(111)
 	ax5.boxplot(data_to_plot)
-	ax5.set_ylabel(title)
+	ax5.set_ylabel('Size of Received Message in Bytes')
+	ax5.set_xlabel('Size of Sent Message in Bytes')
 	title = title + ' Measured on ' + str(machine).capitalize()
 	if print_to_file == 1:
 		title = title + ' (data written to disk)'
 	ax5.set_title(str(title))
 	ax5.set_xticks([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25])
 	ax5.set_xticklabels(['224', '410', '596', '782', '968','1154','1340','1526','1712','1898','2084','2270','2456','2642','2828','3014','3200','3386','3572','3758','3944','4130','4316','4502','4688'])
+	ax5.tick_params(axis='x',rotation=45)
 	fig5.savefig('eval/box_'+str(title)+'_'+str(machine)+'_'+str(number_of_people)+'_'+str(number_of_messages)+'_'+str(print_to_file), bbox_inches='tight')
 
 
 def draw_boxplot(values, start_value_bytes_rec, name, title):
 
-	#print(values)
+	print(values)
 
 	
 	protobuf = np.asarray(values[0])-start_value_bytes_rec[0]
@@ -471,20 +473,20 @@ def main():
 	if machine == 'server':
 		
 
-		draw_scatter_message_length(message_length_proto, message_length_capnp, message_length_avro, message_length_xml, cpu_util, paths[0].split('/')[1], 'CPU Utilization', 'Message Size', 'CPU Utilization in %')
-		draw_scatter_message_length(message_length_proto, message_length_capnp, message_length_avro, message_length_xml, memory, paths[0].split('/')[1], 'Memory Utilization', 'Message Size', 'Memory Utilization in %')
+		draw_scatter_message_length(message_length_proto, message_length_capnp, message_length_avro, message_length_xml, cpu_util, paths[0].split('/')[1], 'CPU Utilization', 'Message Size in Bytes', 'CPU Utilization in %')
+		draw_scatter_message_length(message_length_proto, message_length_capnp, message_length_avro, message_length_xml, memory, paths[0].split('/')[1], 'Memory Utilization', 'Message Size in Bytes', 'Memory Utilization in %')
 
 		if int(print_to_file) == 1:
 			draw_scatter_disk(write_time, [write_time[0][0],write_time[1][0],write_time[2][0],write_time[3][0]], write_bytes, start_value_disk, paths[0].split('/')[1], 'Bytes Written', 'Time to Write to Disk in ms', 'Data Written in Bytes')
 			draw_scatter_disk(write_bytes, start_value_disk, bytes_recv, start_value_bytes_rec, paths[0].split('/')[1], 'Data Received vs. Data Writtento Disk', 'Data Written to Disk in Bytes', 'Data Received in Bytes')
 			draw_scatter_disk(write_time, [write_time[0][0],write_time[1][0],write_time[2][0],write_time[3][0]], bytes_recv, start_value_bytes_rec, paths[0].split('/')[1], 'Time to Write Received Bytes', 'Time to Write Bytes in ms', 'Bytes Received')
-			draw_scatter_mul_y(write_time, [write_time[0][0],write_time[1][0],write_time[2][0],write_time[3][0]], message_length_proto, message_length_capnp, message_length_avro, message_length_xml, paths[0].split('/')[1], 'Time to Write Message Length', 'Time to Write Message in ms', 'Message Length in Bytes')
+			draw_scatter_mul_y(write_time, [write_time[0][0],write_time[1][0],write_time[2][0],write_time[3][0]], message_length_proto, message_length_capnp, message_length_avro, message_length_xml, paths[0].split('/')[1], 'Time to Write Message', 'Time to Write Message in ms', 'Message Size in Bytes')
 
 			#draw_scatter(read_time, read_bytes, paths[0].split('/')[1], 'Bytes Read', 'Time to Read data in ms', 'Data Read in Bytes')
 			#draw_scatter(read_time, bytes_recv, paths[0].split('/')[1], 'Bytes Read', 'Time to Write to disk in ms', 'Data Received in Bytes')
 
 		draw_scatter(read_time, [0,0,0,0], bytes_recv, start_value_bytes_rec, paths[0].split('/')[1], 'Time to Read Bytes', 'Time to Read Bytes in ms', 'Bytes Received')
-		draw_scatter_mul_y(read_time, [0,0,0,0], message_length_proto, message_length_capnp, message_length_avro, message_length_xml, paths[0].split('/')[1], 'Time to Read Message Length', 'Time to Read Message in ms', 'Message Length in Bytes')
+		draw_scatter_mul_y(read_time, [0,0,0,0], message_length_proto, message_length_capnp, message_length_avro, message_length_xml, paths[0].split('/')[1], 'Time to Read Message', 'Time to Read Message in ms', 'Message Size in Bytes')
 
 
 		draw_boxplot_xml(message_length_xml, start_value_bytes_rec, paths[0].split('/')[1], 'Deviations in Message Sizes')
@@ -492,8 +494,11 @@ def main():
 		draw_boxplot(times, [0,0,0,0], paths[0].split('/')[1], 'Processing Time')
 
 	elif machine == 'client':
-		draw_boxplot(times,[0,0,0,0], paths[0].split('/')[1], 'Processing Time')
+		#draw_boxplot(times,[0,0,0,0], paths[0].split('/')[1], 'Processing Time')
 		draw_boxplot(bytes_sent, start_value_bytes_sent, paths[0].split('/')[1], 'Bytes Sent')
+		draw_scatter_message_length(message_length_proto, message_length_capnp, message_length_avro, message_length_xml, cpu_util, paths[0].split('/')[1], 'CPU Utilization', 'Message Size in Bytes', 'CPU Utilization in %')
+		draw_scatter_message_length(message_length_proto, message_length_capnp, message_length_avro, message_length_xml, memory, paths[0].split('/')[1], 'Memory Utilization', 'Message Size in Bytes', 'Memory Utilization in %')
+
 
 
 
