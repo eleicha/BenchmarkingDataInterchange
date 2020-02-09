@@ -110,7 +110,7 @@ def send_XML_message(connection, numberOfPeople, i):
     print("Type of XML data send: " + str(type(messages.encode())))
     print("Iter: " + str(i))
 
-    return(len(message))
+    return(len(messages))
 
 def main():
 
