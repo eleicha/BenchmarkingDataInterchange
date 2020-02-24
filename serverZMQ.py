@@ -130,7 +130,8 @@ def main():
 
     context = zmq.Context()
     socket = context.socket(zmq.REP)
-    socket.bind("tcp://*:5555")
+    #socket.bind("tcp://*:5555")
+    socket.connect("tcp://192.168.2.105:5555")
 
     print("Listening")
 

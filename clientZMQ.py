@@ -128,7 +128,8 @@ def main():
         #psutil.cpu_times_percent(None, False)
         socket = context.socket(zmq.REQ)
         #connection.connect(('172.16.150.67', 12345))
-        socket.connect("tcp://localhost:5555")
+        #socket.connect("tcp://localhost:5555")
+        socket.connect("tcp://192.168.2.105:5555")
         #connection.connect(('192.168.2.105', 12345))
         
         if int(messageType) == 0:
