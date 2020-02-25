@@ -13,6 +13,7 @@ import os
 import sys
 import time
 import zmq
+from zmq import ssh
 
 def send_proto_message(connection, numberOfPeople, i):
 
@@ -128,9 +129,9 @@ def main():
         #psutil.cpu_times_percent(None, False)
         socket = context.socket(zmq.REQ)
         #connection.connect(('172.16.150.67', 12345))
-        #socket.connect("tcp://localhost:5555")
-        socket.connect("tcp://192.168.2.105:5555")
-        #connection.connect(('192.168.2.105', 12345))
+        socket.connect("tcp://127.0.0.1:5555")
+        #ssh.tunnel_connection(socket, "tcp://192.168.2.105:5555")
+        #connection.connect(('192.168.2.104', 5555))
         
         if int(messageType) == 0:
             for i in range(0,int(numberOfExperiments)):
