@@ -129,19 +129,20 @@ def main():
     #psutil.cpu_times_percent(None, False)
     socket = context.socket(zmq.REQ)
     #connection.connect(('172.16.150.67', 12345))
-    socket.connect("tcp://172.16.100.189:5555")
+    socket.connect("tcp://192.168.43.156:5555")
     #ssh.tunnel_connection(socket, "tcp://192.168.2.105:5555")
     #connection.connect(('192.168.2.104', 5555))
 
     if int(messageType) == 0:
-        for i in range(0,int(numberOfExperiments)):
+        for i in range(1,int(numberOfExperiments)+1):
 
             #psutil.cpu_times_percent(None,False)
             #psutil.cpu_percent(None, False)
             psutil.net_io_counters.cache_clear()
-            start = time.perf_counter()
+            
 
-            for x in range(0,int(numberOfMessages)):
+            for x in range(1,int(numberOfMessages)+1):
+                start = time.perf_counter()
                 mem = send_proto_message(socket, numberOfPeople, i)
 
                 message_length.append(mem)
@@ -169,14 +170,14 @@ def main():
         print('finished')
 
     elif int(messageType) == 1 :
-        for i in range(0,int(numberOfExperiments)):
+        for i in range(1,int(numberOfExperiments)+1):
 
-            psutil.cpu_times_percent(None,False)
-            psutil.cpu_percent(None, False)
+            #psutil.cpu_times_percent(None,False)
+            #psutil.cpu_percent(None, False)
             psutil.net_io_counters.cache_clear()
-            start = time.perf_counter()
 
             for x in range(0,int(numberOfMessages)):
+                start = time.perf_counter()
                 mem = send_capnp_message(socket, numberOfPeople,i)
                 message_length.append(mem)
                 times.append(time.perf_counter() - start)
@@ -202,13 +203,14 @@ def main():
             f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
         print('finished')
     elif int(messageType) == 2 :
-        for i in range(0,int(numberOfExperiments)):
+        for i in range(1,int(numberOfExperiments)+1):
 
-            psutil.cpu_times_percent(None,False)
-            psutil.cpu_percent(None, False)
+            #psutil.cpu_times_percent(None,False)
+            #psutil.cpu_percent(None, False)
             psutil.net_io_counters.cache_clear()
-            start = time.perf_counter()
+            
             for x in range(0,int(numberOfMessages)):
+                start = time.perf_counter()
                 mem = send_avro_message(socket, numberOfPeople,i)
                 message_length.append(mem)
                 times.append(time.perf_counter() - start)
@@ -234,13 +236,14 @@ def main():
             f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
         print('finished')
     elif int(messageType) == 3 :
-        for i in range(0,int(numberOfExperiments)):
+        for i in range(1,int(numberOfExperiments)+1):
 
-            psutil.cpu_times_percent(None,False)
-            psutil.cpu_percent(None, False)
+            #psutil.cpu_times_percent(None,False)
+            #psutil.cpu_percent(None, False)
             psutil.net_io_counters.cache_clear()
-            start = time.perf_counter()
+            
             for x in range(0,int(numberOfMessages)):
+                start = time.perf_counter()
                 mem=send_XML_message(socket, numberOfPeople,i)
                 message_length.append(mem)
                 times.append(time.perf_counter() - start)
