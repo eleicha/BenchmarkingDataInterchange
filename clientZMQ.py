@@ -129,7 +129,7 @@ def main():
         #psutil.cpu_times_percent(None, False)
         socket = context.socket(zmq.REQ)
         #connection.connect(('172.16.150.67', 12345))
-        socket.connect("tcp://127.0.0.1:5555")
+        socket.connect("tcp://172.16.100.189:5555")
         #ssh.tunnel_connection(socket, "tcp://192.168.2.105:5555")
         #connection.connect(('192.168.2.104', 5555))
         
