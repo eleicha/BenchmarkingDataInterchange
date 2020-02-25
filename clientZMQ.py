@@ -94,7 +94,7 @@ def send_XML_message(connection, numberOfPeople, i):
     #print(xs.types)
     #correct = xs.is_valid('schema/addressbook.xml')
 
-    connection.send(message)
+    connection.send(messages)
     print("Length of XML data: " + str(len(messages.encode())))
     print("Type of XML data send: " + str(type(messages.encode())))
     print("Iter: " + str(i))
@@ -106,7 +106,7 @@ def main():
     #0 for protobuf, 1 for cap'n proto, 2 for Apache Avro, and 3 for XML
     printToFile = sys.argv[1]
     messageType = sys.argv[2]
-    numberOfPeopleOrigin = sys.argv[3]
+    numberOfPeople = sys.argv[3]
     numberOfMessages = sys.argv[4]
     numberOfExperiments = sys.argv[5]
     machinesUsed = sys.argv[6]
@@ -124,147 +124,147 @@ def main():
     message_length = []
     context = zmq.Context()
             
-    for numberOfPeople in range(1,int(numberOfPeopleOrigin)+1):
+    #for numberOfPeople in range(1,int(numberOfPeopleOrigin)+1):
 
-        #psutil.cpu_times_percent(None, False)
-        socket = context.socket(zmq.REQ)
-        #connection.connect(('172.16.150.67', 12345))
-        socket.connect("tcp://172.16.100.189:5555")
-        #ssh.tunnel_connection(socket, "tcp://192.168.2.105:5555")
-        #connection.connect(('192.168.2.104', 5555))
-        
-        if int(messageType) == 0:
-            for i in range(0,int(numberOfExperiments)):
+    #psutil.cpu_times_percent(None, False)
+    socket = context.socket(zmq.REQ)
+    #connection.connect(('172.16.150.67', 12345))
+    socket.connect("tcp://172.16.100.189:5555")
+    #ssh.tunnel_connection(socket, "tcp://192.168.2.105:5555")
+    #connection.connect(('192.168.2.104', 5555))
 
-                psutil.cpu_times_percent(None,False)
-                psutil.cpu_percent(None, False)
-                psutil.net_io_counters.cache_clear()
-                start = time.perf_counter()
+    if int(messageType) == 0:
+        for i in range(0,int(numberOfExperiments)):
 
-                for x in range(0,int(numberOfMessages)):
-                    mem = send_proto_message(socket, numberOfPeople, i)
+            #psutil.cpu_times_percent(None,False)
+            #psutil.cpu_percent(None, False)
+            psutil.net_io_counters.cache_clear()
+            start = time.perf_counter()
 
-                    message_length.append(mem)
-                    times.append(time.perf_counter() - start)
-                    memory.append(psutil.virtual_memory().percent)
-                    cpu_util.append(psutil.cpu_percent(None, False))
-                    net_io_counters1.append(psutil.net_io_counters().bytes_sent)
-                    cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
-                    cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
-                    cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
+            for x in range(0,int(numberOfMessages)):
+                mem = send_proto_message(socket, numberOfPeople, i)
 
-                    answer = socket.recv()
-                    print("Received reply %s: %s" % (i, answer))
+                message_length.append(mem)
+                times.append(time.perf_counter() - start)
+                #memory.append(psutil.virtual_memory().percent)
+                #cpu_util.append(psutil.cpu_percent(None, False))
+                net_io_counters1.append(psutil.net_io_counters().bytes_sent)
+                #cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
+                #cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
+                #cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
 
-            with open('results/client_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'_'+str(machinesUsed)+'.txt', 'w') as f:
-                f.write('CPU:'+ str(cpu_util)+'\n')
-                f.write('CPU_USER:'+str(cpu_util_user)+'\n')
-                f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
-                f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
-                f.write('MEMORY:'+ str(memory)+'\n')
-                f.write('TIME:'+str(times)+'\n')
-                f.write('message_length:'+str(message_length)+'\n')
-                f.write('bytes_sent:'+str(net_io_counters1)+'\n')
-                f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
-            print('finished')
+                answer = socket.recv()
+                print("Received reply %s: %s" % (i, answer))
 
-        elif int(messageType) == 1 :
-            for i in range(0,int(numberOfExperiments)):
+        with open('results/client_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'_'+str(machinesUsed)+'.txt', 'w') as f:
+            #f.write('CPU:'+ str(cpu_util)+'\n')
+            #f.write('CPU_USER:'+str(cpu_util_user)+'\n')
+            #f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
+            #f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
+            #f.write('MEMORY:'+ str(memory)+'\n')
+            f.write('TIME:'+str(times)+'\n')
+            f.write('message_length:'+str(message_length)+'\n')
+            f.write('bytes_sent:'+str(net_io_counters1)+'\n')
+            f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
+        print('finished')
 
-                psutil.cpu_times_percent(None,False)
-                psutil.cpu_percent(None, False)
-                psutil.net_io_counters.cache_clear()
-                start = time.perf_counter()
+    elif int(messageType) == 1 :
+        for i in range(0,int(numberOfExperiments)):
 
-                for x in range(0,int(numberOfMessages)):
-                    mem = send_capnp_message(socket, numberOfPeople,i)
-                    message_length.append(mem)
-                    times.append(time.perf_counter() - start)
-                    memory.append(psutil.virtual_memory().percent)
-                    cpu_util.append(psutil.cpu_percent(None, False))
-                    net_io_counters1.append(psutil.net_io_counters().bytes_sent)
-                    cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
-                    cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
-                    cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
+            psutil.cpu_times_percent(None,False)
+            psutil.cpu_percent(None, False)
+            psutil.net_io_counters.cache_clear()
+            start = time.perf_counter()
 
-                    answer = socket.recv()
-                    print("Received reply %s: %s" % (i, answer))
+            for x in range(0,int(numberOfMessages)):
+                mem = send_capnp_message(socket, numberOfPeople,i)
+                message_length.append(mem)
+                times.append(time.perf_counter() - start)
+                #memory.append(psutil.virtual_memory().percent)
+                #cpu_util.append(psutil.cpu_percent(None, False))
+                net_io_counters1.append(psutil.net_io_counters().bytes_sent)
+                #cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
+                #cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
+                #cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
 
-            with open('results/client_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'_'+str(machinesUsed)+'.txt', 'w') as f:
-                f.write('CPU:'+ str(cpu_util)+'\n')
-                f.write('CPU_USER:'+str(cpu_util_user)+'\n')
-                f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
-                f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
-                f.write('MEMORY:'+ str(memory)+'\n')
-                f.write('TIME:'+str(times)+'\n')
-                f.write('message_length:'+str(message_length)+'\n')
-                f.write('bytes_sent:'+str(net_io_counters1)+'\n')
-                f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
-            print('finished')
-        elif int(messageType) == 2 :
-            for i in range(0,int(numberOfExperiments)):
+                answer = socket.recv()
+                print("Received reply %s: %s" % (i, answer))
 
-                psutil.cpu_times_percent(None,False)
-                psutil.cpu_percent(None, False)
-                psutil.net_io_counters.cache_clear()
-                start = time.perf_counter()
-                for x in range(0,int(numberOfMessages)):
-                    mem = send_avro_message(socket, numberOfPeople,i)
-                    message_length.append(mem)
-                    times.append(time.perf_counter() - start)
-                    memory.append(psutil.virtual_memory().percent)
-                    cpu_util.append(psutil.cpu_percent(None, False))
-                    net_io_counters1.append(psutil.net_io_counters().bytes_sent)
-                    cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
-                    cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
-                    cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
+        with open('results/client_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'_'+str(machinesUsed)+'.txt', 'w') as f:
+            #f.write('CPU:'+ str(cpu_util)+'\n')
+            #f.write('CPU_USER:'+str(cpu_util_user)+'\n')
+            #f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
+            #f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
+            #f.write('MEMORY:'+ str(memory)+'\n')
+            f.write('TIME:'+str(times)+'\n')
+            f.write('message_length:'+str(message_length)+'\n')
+            f.write('bytes_sent:'+str(net_io_counters1)+'\n')
+            f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
+        print('finished')
+    elif int(messageType) == 2 :
+        for i in range(0,int(numberOfExperiments)):
 
-                    answer = socket.recv()
-                    print("Received reply %s: %s" % (i, answer))
+            psutil.cpu_times_percent(None,False)
+            psutil.cpu_percent(None, False)
+            psutil.net_io_counters.cache_clear()
+            start = time.perf_counter()
+            for x in range(0,int(numberOfMessages)):
+                mem = send_avro_message(socket, numberOfPeople,i)
+                message_length.append(mem)
+                times.append(time.perf_counter() - start)
+                #memory.append(psutil.virtual_memory().percent)
+                #cpu_util.append(psutil.cpu_percent(None, False))
+                net_io_counters1.append(psutil.net_io_counters().bytes_sent)
+                #cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
+                #cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
+                #cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
 
-            with open('results/client_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'_'+str(machinesUsed)+'.txt', 'w') as f:
-                f.write('CPU:'+ str(cpu_util)+'\n')
-                f.write('CPU_USER:'+str(cpu_util_user)+'\n')
-                f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
-                f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
-                f.write('MEMORY:'+ str(memory)+'\n')
-                f.write('TIME:'+str(times)+'\n')
-                f.write('message_length:'+str(message_length)+'\n')
-                f.write('bytes_sent:'+str(net_io_counters1)+'\n')
-                f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
-            print('finished')
-        elif int(messageType) == 3 :
-            for i in range(0,int(numberOfExperiments)):
+                answer = socket.recv()
+                print("Received reply %s: %s" % (i, answer))
 
-                psutil.cpu_times_percent(None,False)
-                psutil.cpu_percent(None, False)
-                psutil.net_io_counters.cache_clear()
-                start = time.perf_counter()
-                for x in range(0,int(numberOfMessages)):
-                    mem=send_XML_message(socket, numberOfPeople,i)
-                    message_length.append(mem)
-                    times.append(time.perf_counter() - start)
-                    memory.append(psutil.virtual_memory().percent)
-                    cpu_util.append(psutil.cpu_percent(None, False))
-                    net_io_counters1.append(psutil.net_io_counters().bytes_sent)
-                    cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
-                    cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
-                    cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
+        with open('results/client_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'_'+str(machinesUsed)+'.txt', 'w') as f:
+            #f.write('CPU:'+ str(cpu_util)+'\n')
+            #f.write('CPU_USER:'+str(cpu_util_user)+'\n')
+            #f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
+            #f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
+            #f.write('MEMORY:'+ str(memory)+'\n')
+            f.write('TIME:'+str(times)+'\n')
+            f.write('message_length:'+str(message_length)+'\n')
+            f.write('bytes_sent:'+str(net_io_counters1)+'\n')
+            f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
+        print('finished')
+    elif int(messageType) == 3 :
+        for i in range(0,int(numberOfExperiments)):
 
-                    answer = socket.recv()
-                    print("Received reply %s: %s" % (i, answer))
+            psutil.cpu_times_percent(None,False)
+            psutil.cpu_percent(None, False)
+            psutil.net_io_counters.cache_clear()
+            start = time.perf_counter()
+            for x in range(0,int(numberOfMessages)):
+                mem=send_XML_message(socket, numberOfPeople,i)
+                message_length.append(mem)
+                times.append(time.perf_counter() - start)
+                #memory.append(psutil.virtual_memory().percent)
+                #cpu_util.append(psutil.cpu_percent(None, False))
+                net_io_counters1.append(psutil.net_io_counters().bytes_sent)
+                #cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
+                #cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
+                #cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
 
-            with open('results/client_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'_'+str(machinesUsed)+'.txt', 'w') as f:
-                f.write('CPU:'+ str(cpu_util)+'\n')
-                f.write('CPU_USER:'+str(cpu_util_user)+'\n')
-                f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
-                f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
-                f.write('MEMORY:'+ str(memory)+'\n')
-                f.write('TIME:'+str(times)+'\n')
-                f.write('message_length:'+str(message_length)+'\n')
-                f.write('bytes_sent:'+str(net_io_counters1)+'\n')
-                f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
-            print('finished')
+                answer = socket.recv()
+                print("Received reply %s: %s" % (i, answer))
+
+        with open('results/client_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'_'+str(machinesUsed)+'.txt', 'w') as f:
+            #f.write('CPU:'+ str(cpu_util)+'\n')
+            #f.write('CPU_USER:'+str(cpu_util_user)+'\n')
+            #f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
+            #f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
+            #f.write('MEMORY:'+ str(memory)+'\n')
+            f.write('TIME:'+str(times)+'\n')
+            f.write('message_length:'+str(message_length)+'\n')
+            f.write('bytes_sent:'+str(net_io_counters1)+'\n')
+            f.write('start_value_bytes_sent:'+str(start_value_bytes_sent)+'\n')
+        print('finished')
 
 if __name__ == '__main__':
     main()

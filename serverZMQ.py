@@ -131,24 +131,24 @@ def main():
 
     context = zmq.Context()
     socket = context.socket(zmq.REP)
-    socket.bind("tcp://127.0.0.1:5555")
+    socket.bind("tcp://*:5555")
     #ssh.tunnel_connection(socket, "tcp://192.168.2.104:5555", "pi@raspberrypi")
 
     print("Listening")
 
     times = []
     message_length_total = []
-    cpu_utilization = []
-    cpu_util_user = []
-    cpu_util_system = []
-    cpu_util_idle = []
+    #cpu_utilization = []
+    #cpu_util_user = []
+    #cpu_util_system = []
+    #cpu_util_idle = []
     disk_info1 = []
     disk_info2 = []
     disk_info3 = []
     disk_info4 = []
     disk_info5 = []
     disk_info6 = []
-    memory = []
+    #memory = []
     net_io_counters1 = []
     net_io_counters2 = []
     time_stamp = []
@@ -161,63 +161,63 @@ def main():
         if int(printToFile) == 0:
             if int(messageType) == 0:
                 start = time.perf_counter()
-                psutil.cpu_percent(None, False)
-                psutil.cpu_times_percent(None,False)
+                #psutil.cpu_percent(None, False)
+                #psutil.cpu_times_percent(None,False)
                 psutil.net_io_counters.cache_clear()
                 psutil.disk_io_counters.cache_clear()
                 message_length.append(handle_proto_client(socket))
             elif int(messageType) == 1:
                 start = time.perf_counter()
-                psutil.cpu_percent(None, False)
+                #psutil.cpu_percent(None, False)
                 psutil.net_io_counters.cache_clear()
                 psutil.disk_io_counters.cache_clear()
                 message_length.append(handle_capnp_client(socket))
             elif int(messageType) == 2:
                 start = time.perf_counter()
-                psutil.cpu_percent(None, False)
+                #psutil.cpu_percent(None, False)
                 psutil.net_io_counters.cache_clear()
                 psutil.disk_io_counters.cache_clear()
                 message_length.append(handle_avro_client(socket))
             elif int(messageType) == 3:
                 start = time.perf_counter()
-                psutil.cpu_percent(None, False)
+                #psutil.cpu_percent(None, False)
                 psutil.net_io_counters.cache_clear()
                 psutil.disk_io_counters.cache_clear()
                 message_length.append(handle_XML_client(socket))
         elif int(printToFile) == 1:
             if int(messageType) == 0:
                 start = time.perf_counter()
-                psutil.cpu_percent(None, False)
+                #psutil.cpu_percent(None, False)
                 psutil.net_io_counters.cache_clear()
                 psutil.disk_io_counters.cache_clear()
                 message_length.append(handle_proto_client_print_to_file(socket))
             elif int(messageType) == 1:
                 start = time.perf_counter()
-                psutil.cpu_percent(None, False)
+                #psutil.cpu_percent(None, False)
                 psutil.net_io_counters.cache_clear()
                 psutil.disk_io_counters.cache_clear()
                 message_length.append(handle_capnp_client_print_to_file(socket))
             elif int(messageType) == 2:
                 start = time.perf_counter()
-                psutil.cpu_percent(None, False)
+                #psutil.cpu_percent(None, False)
                 psutil.net_io_counters.cache_clear()
                 psutil.disk_io_counters.cache_clear()
                 message_length.append(handle_avro_client_print_to_file(socket))
             elif int(messageType) == 3:
                 start = time.perf_counter()
-                psutil.cpu_percent(None, False)
+                #psutil.cpu_percent(None, False)
                 psutil.net_io_counters.cache_clear()
                 psutil.disk_io_counters.cache_clear()
                 message_length.append(handle_XML_client_print_to_file(socket))
 
         times.append(time.perf_counter() - start)
         message_length_total.append(message_length)
-        memory.append(psutil.virtual_memory().percent)
+        #memory.append(psutil.virtual_memory().percent)
         time_stamp.append(time.perf_counter())
-        cpu_utilization.append(psutil.cpu_percent(None, False))
-        cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
-        cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
-        cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
+        #cpu_utilization.append(psutil.cpu_percent(None, False))
+        #cpu_util_user.append(psutil.cpu_times_percent(None, False).user)
+        #cpu_util_system.append(psutil.cpu_times_percent(None, False).system)
+        #cpu_util_idle.append(psutil.cpu_times_percent(None, False).idle)
 
         disk_info1.append(psutil.disk_io_counters().read_count)
         disk_info2.append(psutil.disk_io_counters().write_count)
@@ -225,22 +225,22 @@ def main():
         disk_info4.append(psutil.disk_io_counters().write_bytes)
         disk_info5.append(psutil.disk_io_counters().read_time)
         disk_info6.append(psutil.disk_io_counters().write_time)
-        net_io_counters1.append(psutil.net_io_counters().bytes_recv)
+        #net_io_counters1.append(psutil.net_io_counters().bytes_recv)
 
         with open('results/server_'+str(messageType)+'_'+str(numberOfPeople)+'_'+str(numberOfMessages)+'_'+str(printToFile)+'_'+str(machinesUsed)+'.txt', 'w') as f:
-            f.write('CPU_UTIL:'+str(cpu_utilization)+'\n')
-            f.write('CPU_USER:'+str(cpu_util_user)+'\n')
-            f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
-            f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
+            #f.write('CPU_UTIL:'+str(cpu_utilization)+'\n')
+            #f.write('CPU_USER:'+str(cpu_util_user)+'\n')
+            #f.write('CPU_SYSTEM:'+str(cpu_util_system)+'\n')
+            #f.write('CPU_IDLE:'+str(cpu_util_idle)+'\n')
             f.write('message_length:'+str(message_length_total)+'\n')
             f.write('time_stamp:'+str(time_stamp)+'\n')
-            f.write('MEMORY:'+ str(memory)+'\n')
+            #f.write('MEMORY:'+ str(memory)+'\n')
             f.write('TIMES:'+str(times)+'\n')
             f.write('read_bytes:'+str(disk_info3)+'\n')
             f.write('write_bytes:'+str(disk_info4)+'\n')
             f.write('read_time:'+str(disk_info5)+'\n')
             f.write('write_time:'+str(disk_info6)+'\n')
-            f.write('bytes_recv:'+str(net_io_counters1)+'\n')
+            #f.write('bytes_recv:'+str(net_io_counters1)+'\n')
             f.write('start_value_disk:'+str(start_value_disk)+'\n')
             f.write('start_value_bytes_rec:'+str(start_value_bytes_rec)+'\n')
 

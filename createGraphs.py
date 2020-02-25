@@ -146,9 +146,9 @@ def draw_scatter_disk(x, start_value_x, y, start_value_y, name, title, x_label, 
 	ax3.set_ylabel(y_label)
 	ax3.set_xlabel(x_label)
 	ax3.legend((proto, capnp, avro, xml), ('Protobuf', 'Cap\'n Proto', 'Apache Avro', 'XML'))
-	title = title + ' Measured on ' + str(machine).capitalize()
+	filetitle = title + ' Measured on ' + str(machine).capitalize()
 	if int(print_to_file) == 1:
-		filetitle = title +'_disk'
+		filetitle = filetitle +'_disk'
 		#title = title + ' (Data Written to Disk)'
 	ax3.set_title(str(title))
 	#plt.xticklabels(['Protobuf', 'Cap\'n Proto', 'Apache Avro', 'XML'])
@@ -232,9 +232,9 @@ def draw_boxplot_xml(values, start_value_bytes_rec, name, title):
 	val = []
 	for i in range(0, len(values)):
 		val.append(values[i])
-		print(values[i])
+		#print(values[i])
 		if (i + 1)%10 == 0 :
-			print(val)
+			#print(val)
 			data_to_plot.append(val)
 			val = []
 	'''
@@ -245,7 +245,7 @@ def draw_boxplot_xml(values, start_value_bytes_rec, name, title):
 
 	data_to_plot = [protobuf, capnp, avro, xml]
 	'''
-	print(data_to_plot)
+	#print(data_to_plot)
 	machine = name.split('_')[0]
 	number_of_people = name.split('_')[2]
 	number_of_messages = name.split('_')[3]
@@ -267,7 +267,7 @@ def draw_boxplot_xml(values, start_value_bytes_rec, name, title):
 	fig5.savefig('eval/box_'+str(title)+'_'+str(machine)+'_'+str(number_of_people)+'_'+str(number_of_messages)+'_'+str(print_to_file), bbox_inches='tight')
 
 
-def draw_boxplot(values, start_value_bytes_rec, name, title):
+def draw_boxplot(values, start_value_bytes_rec, name, title, einheit):
 
 	print(values)
 
@@ -288,7 +288,7 @@ def draw_boxplot(values, start_value_bytes_rec, name, title):
 
 	#ax = fig.add_subplot(111)
 	ax6.boxplot(data_to_plot)
-	ax6.set_ylabel(title)
+	ax6.set_ylabel(title + ' ' +einheit)
 	title = title + ' Measured on ' + str(machine).capitalize()
 	if int(print_to_file) == 1:
 		title = title + ' (data written to disk)'
@@ -325,8 +325,12 @@ def main():
 	start_value_disk = []
 	start_value_bytes_rec = []
 	start_value_bytes_sent = []
+	message_length_all = []
 
 	paths = [sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]]
+
+	machine = paths[0].split('/')[1].split('_')[0]
+	print_to_file = paths[0].split('/')[1].split('_')[4]
 
 	for path in paths:
 		identify_format = path.split('/')[1].split('_')[1]
@@ -337,6 +341,12 @@ def main():
 
 		for line in Lines:
 			if line.split(':')[0] == 'CPU_UTIL':
+				values = []
+				for value in line.split(':')[1].lstrip('[').rstrip(']').split(','):
+					if len(value) != 0:
+						values.append(float(value))
+				cpu_util.append(values)
+			elif line.split(':')[0] == 'CPU':
 				values = []
 				for value in line.split(':')[1].lstrip('[').rstrip(']').split(','):
 					if len(value) != 0:
@@ -373,6 +383,12 @@ def main():
 						values.append(float(value))
 				memory.append(values)
 			elif line.split(':')[0] == 'TIMES':
+				values = []
+				for value in line.split(':')[1].lstrip('[').rstrip(']').split(','):
+					if len(value) != 0:
+						values.append(float(value))
+				times.append(values)
+			elif line.split(':')[0] == 'TIME':
 				values = []
 				for value in line.split(':')[1].lstrip('[').rstrip(']').split(','):
 					if len(value) != 0:
@@ -448,7 +464,7 @@ def main():
 			elif line.split(':')[0] == 'start_value_bytes_sent':
 				start_value_bytes_sent.append(float(line.split(':')[1]))
 				#print(start_value_bytes_rec)
-			elif line.split(':')[0] == 'message_length':
+			elif line.split(':')[0] == 'message_length' and machine == 'server':
 				message_length_one_ex = []
 				l = line.split(':')[1].lstrip('[').rstrip(']').split(']')[0]
 				if len(l) != 0:
@@ -464,10 +480,15 @@ def main():
 					message_length_avro = message_length_one_ex
 				elif int(identify_format) == 3:
 					message_length_xml = message_length_one_ex
+			elif line.split(':')[0] == 'message_length' and machine == 'client':
+				values = []
+				for value in line.split(':')[1].lstrip('[').rstrip(']').split(','):
+					if len(value) != 0:
+						values.append(float(value))
+				message_length_all.append(values)
 				
 
-	machine = paths[0].split('/')[1].split('_')[0]
-	print_to_file = paths[0].split('/')[1].split('_')[4]
+
 	#print(message_length_proto)
 
 	if machine == 'server':
@@ -478,7 +499,7 @@ def main():
 
 		if int(print_to_file) == 1:
 			draw_scatter_disk(write_time, [write_time[0][0],write_time[1][0],write_time[2][0],write_time[3][0]], write_bytes, start_value_disk, paths[0].split('/')[1], 'Bytes Written', 'Time to Write to Disk in ms', 'Data Written in Bytes')
-			draw_scatter_disk(write_bytes, start_value_disk, bytes_recv, start_value_bytes_rec, paths[0].split('/')[1], 'Data Received vs. Data Writtento Disk', 'Data Written to Disk in Bytes', 'Data Received in Bytes')
+			draw_scatter_disk(write_bytes, start_value_disk, bytes_recv, start_value_bytes_rec, paths[0].split('/')[1], 'Data Received vs. Data Written to Disk', 'Data Written to Disk in Bytes', 'Data Received in Bytes')
 			draw_scatter_disk(write_time, [write_time[0][0],write_time[1][0],write_time[2][0],write_time[3][0]], bytes_recv, start_value_bytes_rec, paths[0].split('/')[1], 'Time to Write Received Bytes', 'Time to Write Bytes in ms', 'Bytes Received')
 			draw_scatter_mul_y(write_time, [write_time[0][0],write_time[1][0],write_time[2][0],write_time[3][0]], message_length_proto, message_length_capnp, message_length_avro, message_length_xml, paths[0].split('/')[1], 'Time to Write Message', 'Time to Write Message in ms', 'Message Size in Bytes')
 
@@ -490,14 +511,16 @@ def main():
 
 
 		draw_boxplot_xml(message_length_xml, start_value_bytes_rec, paths[0].split('/')[1], 'Deviations in Message Sizes')
+		draw_boxplot(cpu_util, [0,0,0,0], paths[0].split('/')[1], 'CPU Utilization', 'in %')
 		#draw_boxplot(bytes_recv, start_value_bytes_rec, paths[0].split('/')[1], 'Bytes Received')
-		draw_boxplot(times, [0,0,0,0], paths[0].split('/')[1], 'Processing Time')
+		draw_boxplot(times, [0,0,0,0], paths[0].split('/')[1], 'Processing Time', 'in ms')
 
 	elif machine == 'client':
 		#draw_boxplot(times,[0,0,0,0], paths[0].split('/')[1], 'Processing Time')
-		draw_boxplot(bytes_sent, start_value_bytes_sent, paths[0].split('/')[1], 'Bytes Sent')
-		draw_scatter_message_length(message_length_proto, message_length_capnp, message_length_avro, message_length_xml, cpu_util, paths[0].split('/')[1], 'CPU Utilization', 'Message Size in Bytes', 'CPU Utilization in %')
-		draw_scatter_message_length(message_length_proto, message_length_capnp, message_length_avro, message_length_xml, memory, paths[0].split('/')[1], 'Memory Utilization', 'Message Size in Bytes', 'Memory Utilization in %')
+		draw_scatter_message_length(message_length_all[0], message_length_all[1], message_length_all[2], message_length_all[3], cpu_util, paths[0].split('/')[1], 'CPU Utilization', 'Message Size in Bytes', 'CPU Utilization in %')
+		draw_scatter_message_length(message_length_all[0], message_length_all[1], message_length_all[2], message_length_all[3], memory, paths[0].split('/')[1], 'Memory Utilization', 'Message Size in Bytes', 'Memory Utilization in %')
+		#draw_boxplot(bytes_sent, start_value_bytes_sent, paths[0].split('/')[1], 'Bytes Sent')
+		draw_boxplot(times, [0,0,0,0], paths[0].split('/')[1], 'Processing Time', 'in ms')
 
 
 

@@ -1,0 +1,9 @@
+CPU:[0.0]
+CPU_USER:[0.0]
+CPU_SYSTEM:[0.0]
+CPU_IDLE:[0.0]
+MEMORY:[75.0]
+TIME:[0.00010237199967377819]
+message_length:[57]
+bytes_sent:[545391977]
+start_value_bytes_sent:545391081
