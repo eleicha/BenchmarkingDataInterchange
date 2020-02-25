@@ -14,6 +14,7 @@ import psutil
 import sys
 import os
 import zmq
+from zmq import ssh
 
 def handle_proto_client(connection):
 
@@ -130,8 +131,8 @@ def main():
 
     context = zmq.Context()
     socket = context.socket(zmq.REP)
-    #socket.bind("tcp://*:5555")
-    socket.connect("tcp://192.168.2.105:5555")
+    socket.bind("tcp://127.0.0.1:5555")
+    #ssh.tunnel_connection(socket, "tcp://192.168.2.104:5555", "pi@raspberrypi")
 
     print("Listening")
 
