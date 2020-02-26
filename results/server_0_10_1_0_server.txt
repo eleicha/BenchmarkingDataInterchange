@@ -1,0 +1,9 @@
+message_length:[[570]]
+time_stamp:[45970.450160405]
+TIMES:[2.467792592004116]
+read_bytes:[7733760000]
+write_bytes:[516613776384]
+read_time:[162476]
+write_time:[4070100]
+start_value_disk:516613764096
+start_value_bytes_rec:1079491042
