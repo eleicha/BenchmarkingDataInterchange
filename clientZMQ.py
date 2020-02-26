@@ -42,7 +42,7 @@ def send_capnp_message(connection, numberOfPeople, i):
     
 
     addresses = addressbook_capnp.AddressBook.new_message()
-    people = addresses.init("people", int(numberOfPeople))
+    people = addresses.init("people", int(numberOfPeople)+1)
 
     for x in range(1, int(numberOfPeople)+1):
         people[x].name = "Rosa Luxemburg"
@@ -75,7 +75,7 @@ def send_avro_message(connection, numberOfPeople, i):
     buf.seek(0)
     data = buf.read()
 
-    connection.send(message)
+    connection.send(data)
     print("Length of Avro data: " + str(len(data)))
     print("Type of Avro data send: " + str(type(data)))
     print("Iter: " + str(i))
@@ -94,7 +94,7 @@ def send_XML_message(connection, numberOfPeople, i):
     #print(xs.types)
     #correct = xs.is_valid('schema/addressbook.xml')
 
-    connection.send(messages)
+    connection.send_string(messages)
     print("Length of XML data: " + str(len(messages.encode())))
     print("Type of XML data send: " + str(type(messages.encode())))
     print("Iter: " + str(i))
